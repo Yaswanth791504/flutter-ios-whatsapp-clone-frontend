@@ -3,8 +3,9 @@ import 'package:textz/models/user.dart';
 import 'package:textz/screens/IOSChatScreen.dart';
 
 class IOSContact extends StatefulWidget {
-  const IOSContact({super.key, required this.user});
+  const IOSContact({super.key, required this.user, this.newChat = false});
   final User user;
+  final bool newChat;
 
   @override
   State<IOSContact> createState() => _IOSContactState();
@@ -63,14 +64,16 @@ class _IOSContactState extends State<IOSContact> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Text(
-                              widget.user.time,
-                              style: const TextStyle(
-                                fontSize: 20.0,
-                                color: Color(0xFF7B7B7B),
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                            !widget.newChat
+                                ? Text(
+                                    widget.user.time,
+                                    style: const TextStyle(
+                                      fontSize: 20.0,
+                                      color: Color(0xFF7B7B7B),
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                : const SizedBox(),
                           ],
                         ),
                         const SizedBox(
@@ -78,10 +81,12 @@ class _IOSContactState extends State<IOSContact> {
                         ),
                         Row(
                           children: <Widget>[
-                            Icon(
-                              widget.user.seen ? Icons.done_all_outlined : Icons.check,
-                              color: const Color(0xFF7B7B7B),
-                            ),
+                            !widget.newChat
+                                ? Icon(
+                                    widget.user.seen ? Icons.done_all_outlined : Icons.check,
+                                    color: const Color(0xFF7B7B7B),
+                                  )
+                                : const SizedBox(),
                             Text(
                               widget.user.lastMessage.length < 20
                                   ? widget.user.lastMessage

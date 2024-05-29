@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:textz/components/IOSBottomNavigationBar.dart";
 import "package:textz/screens/IOSCameraScreen.dart";
+import "package:textz/screens/IOSEditScreen.dart";
+import "package:textz/screens/IOSNewChatScreen.dart";
 
 import 'IOSMainHomeScreen.dart';
 
@@ -32,54 +34,72 @@ class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color(0xFFF8F7F7),
-        secondaryHeaderColor: blueAppColor,
-        fontFamily: "SfUiText",
-      ),
-      home: Scaffold(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F7F7),
+      appBar: AppBar(
+        primary: true,
         backgroundColor: const Color(0xFFF8F7F7),
-        appBar: AppBar(
-          primary: true,
-          backgroundColor: const Color(0xFFF8F7F7),
-          title: const Text(
-            'Edit',
-            style: TextStyle(
-              color: blueAppColor,
-            ),
-          ),
-          actions: const <Widget>[
-            Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(
-                Icons.edit_square,
-                size: 30.0,
+        title: Builder(builder: (context) {
+          return InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                showDragHandle: true,
+                backgroundColor: const Color(0xFFF8F7F7),
+                context: context,
+                useSafeArea: true,
+                builder: (ctx) => const IOSEditScreen(),
+              );
+            },
+            child: const Text(
+              'Edit',
+              style: TextStyle(
                 color: blueAppColor,
               ),
             ),
-          ],
-        ),
-        body: TabBarView(
-          controller: _controller,
-          children: const <Widget>[
-            Text('status'),
-            Text('calls'),
-            IOSCameraScreen(),
-            IOSMainHomeScreen(),
-            Text('settings'),
-          ],
-        ),
-        bottomNavigationBar: IOSBottomNavigationBar(
-          selectedIndex: initialIndex,
-          onDestinationChange: (int index) {
-            setState(() {
-              _controller.index = index;
-              initialIndex = index;
-            });
-          },
-        ),
+          );
+        }),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: Builder(builder: (context) {
+              return IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => const IOSNewChatScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.edit_square,
+                  size: 30.0,
+                  color: blueAppColor,
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+      body: TabBarView(
+        controller: _controller,
+        children: const <Widget>[
+          Text('status'),
+          Text('calls'),
+          IOSCameraScreen(),
+          IOSMainHomeScreen(),
+          Text('settings'),
+        ],
+      ),
+      bottomNavigationBar: IOSBottomNavigationBar(
+        selectedIndex: initialIndex,
+        onDestinationChange: (int index) {
+          setState(() {
+            _controller.index = index;
+            initialIndex = index;
+          });
+        },
       ),
     );
   }
