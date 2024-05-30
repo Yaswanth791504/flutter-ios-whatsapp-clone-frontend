@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textz/components/IOSBottomNavigationBar.dart';
 import 'package:textz/components/IOSContact.dart';
 import 'package:textz/components/IOSSearchBar.dart';
 import 'package:textz/models/user.dart';
@@ -17,7 +18,21 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            const IOSSearchBar(),
+            Row(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.chevron_left,
+                    color: blueAppColor,
+                    size: 40,
+                  ),
+                ),
+                const IOSSearchBar(),
+              ],
+            ),
             Expanded(
                 child: ListView(
               children: [

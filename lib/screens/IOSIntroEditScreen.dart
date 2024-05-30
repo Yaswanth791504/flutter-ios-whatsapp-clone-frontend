@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:textz/components/IOSIntroButton.dart';
 import 'package:textz/components/IOSTextFormField.dart';
+import 'package:textz/main.dart';
+import 'package:textz/screens/IOSHomeScreen.dart';
 
 class IOSIntroEditScreen extends StatefulWidget {
   const IOSIntroEditScreen({super.key, required this.pageController});
@@ -70,7 +72,9 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
               IOSIntroButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      widget.pageController.currentState?.next();
+                      // widget.pageController.currentState?.next();
+                      userPreference.setLoggedIn();
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const IOSHomeScreen()));
                     }
                   },
                   text: 'Next')

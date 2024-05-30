@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:textz/components/IOSContact.dart';
 import 'package:textz/components/IOSHeader.dart';
 import 'package:textz/components/IOSOptions.dart';
@@ -43,23 +45,19 @@ class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F7F7),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const IOSHeader(screenName: "Chats"),
-          const IOSSearchBar(),
-          const IOSOptions(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: users.map((user) => IOSContact(user: user)).toList(),
-              ),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const IOSHeader(screenName: "Chats"),
+        const IOSSearchBar(),
+        const IOSOptions(),
+        Flexible(
+          flex: 13,
+          child: ListView(
+            children: users.map((user) => IOSContact(user: user)).toList(),
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }

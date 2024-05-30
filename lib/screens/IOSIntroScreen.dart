@@ -6,7 +6,6 @@ import 'package:textz/components/IOSBottomNavigationBar.dart';
 import 'package:textz/components/IOSIntroButton.dart';
 import 'package:textz/components/IOSTextFormField.dart';
 import 'package:textz/screens/IOSIntroEditScreen.dart';
-import 'package:textz/screens/IOSIntroSuccessScreen.dart';
 
 class IOSIntroScreen extends StatefulWidget {
   const IOSIntroScreen({super.key});
@@ -181,6 +180,7 @@ class _IOSIntroScreenState extends State<IOSIntroScreen> {
                   child: Form(
                     key: _phoneNumberKey,
                     child: OtpTextField(
+                      fieldWidth: 30,
                       onSubmit: (String code) async {
                         try {
                           FirebaseAuth auth = FirebaseAuth.instance;
@@ -208,10 +208,6 @@ class _IOSIntroScreenState extends State<IOSIntroScreen> {
           PageViewModel(
             titleWidget: const Text(''),
             bodyWidget: IOSIntroEditScreen(pageController: _introKey),
-          ),
-          PageViewModel(
-            titleWidget: const Text(''),
-            bodyWidget: const IOSIntroSuccessScreen(),
           ),
         ],
         showNextButton: false,

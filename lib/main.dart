@@ -13,6 +13,7 @@ void main() async {
   cameras = await availableCameras();
   await Firebase.initializeApp();
   userPreference.initializeLoggedIn();
+  print(await userPreference.isLoggedIn());
   runApp(const MainApp());
 }
 
@@ -53,7 +54,6 @@ class MainApp extends StatelessWidget {
           } else if (snapshot.hasData) {
             // Based on login status show appropriate screen
             bool isLoggedIn = snapshot.data!;
-            print(isLoggedIn);
             return isLoggedIn ? const IOSHomeScreen() : const IOSIntroScreen();
           } else {
             // Handle case where snapshot has no data
