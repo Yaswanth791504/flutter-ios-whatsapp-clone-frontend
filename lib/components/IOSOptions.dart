@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:textz/components/IOSBottomNavigationBar.dart';
+import 'package:textz/main.dart';
 
 const TextStyle styles = TextStyle(
   fontSize: 17.0,

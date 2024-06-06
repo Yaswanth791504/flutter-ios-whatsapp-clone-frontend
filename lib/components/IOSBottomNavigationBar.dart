@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
-
-const Color blueAppColor = Color(0xFF1067FF);
+import "package:textz/main.dart";
 
 class IOSBottomNavigationBar extends StatefulWidget {
   const IOSBottomNavigationBar({

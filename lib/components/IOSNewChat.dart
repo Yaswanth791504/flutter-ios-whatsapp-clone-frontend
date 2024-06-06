@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:textz/models/user.dart';
+import 'package:textz/models/Friends.dart';
 import 'package:textz/screens/IOSChatScreen.dart';
 
-class IOSContact extends StatefulWidget {
-  const IOSContact({super.key, required this.user, this.newChat = false});
-  final User user;
-  final bool newChat;
+class IOSNewChat extends StatefulWidget {
+  const IOSNewChat({super.key, required this.friend});
+  final Friends friend;
 
   @override
-  State<IOSContact> createState() => _IOSContactState();
+  State<IOSNewChat> createState() => _IOSNewChat();
 }
 
-class _IOSContactState extends State<IOSContact> {
+class _IOSNewChat extends State<IOSNewChat> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,7 +18,9 @@ class _IOSContactState extends State<IOSContact> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => IOSChatScreen(user: widget.user),
+            builder: (context) => IOSChatScreen(
+              friend: widget.friend,
+            ),
           ),
         );
       },
@@ -27,7 +28,7 @@ class _IOSContactState extends State<IOSContact> {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: Color(0xFFfffbfe),
           border: Border(
             bottom: BorderSide(
               color: Color(0xFFd7d7d7),
@@ -40,7 +41,7 @@ class _IOSContactState extends State<IOSContact> {
             Container(
               margin: const EdgeInsets.only(right: 10.0),
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/${widget.user.image}'),
+                backgroundImage: NetworkImage(widget.friend.profile_picture),
                 radius: 35.0,
               ),
             ),
@@ -56,24 +57,14 @@ class _IOSContactState extends State<IOSContact> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              widget.user.name.split(" ").length <= 2
-                                  ? widget.user.name
-                                  : "${widget.user.name.split(" ")[0]} ${widget.user.name.split(" ")[1]}",
+                              widget.friend.name.split(" ").length <= 2
+                                  ? widget.friend.name
+                                  : "${widget.friend.name.split(" ")[0]} ${widget.friend.name.split(" ")[1]}",
                               style: const TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            !widget.newChat
-                                ? Text(
-                                    widget.user.time,
-                                    style: const TextStyle(
-                                      fontSize: 20.0,
-                                      color: Color(0xFF7B7B7B),
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )
-                                : const SizedBox(),
                           ],
                         ),
                         const SizedBox(
@@ -81,16 +72,10 @@ class _IOSContactState extends State<IOSContact> {
                         ),
                         Row(
                           children: <Widget>[
-                            !widget.newChat
-                                ? Icon(
-                                    widget.user.seen ? Icons.done_all_outlined : Icons.check,
-                                    color: const Color(0xFF7B7B7B),
-                                  )
-                                : const SizedBox(),
                             Text(
-                              widget.user.lastMessage.length < 20
-                                  ? widget.user.lastMessage
-                                  : "${widget.user.lastMessage.substring(0, 19)}...",
+                              widget.friend.about.length < 20
+                                  ? widget.friend.about
+                                  : "${widget.friend.about.substring(0, 19)}...",
                               style: const TextStyle(
                                 fontSize: 17.0,
                                 color: Color(0xFF7B7B7B),

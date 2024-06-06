@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-
-late List<CameraDescription> cameras;
+import 'package:textz/main.dart';
+import 'package:textz/screens/IOSImageSender.dart';
 
 class IOSCamera extends StatefulWidget {
   const IOSCamera({super.key});
@@ -18,7 +18,7 @@ class _IOSCameraState extends State<IOSCamera> {
   @override
   void initState() {
     super.initState();
-    _cameraController = CameraController(cameras[0], ResolutionPreset.high);
+    _cameraController = CameraController(cameras[1], ResolutionPreset.high);
     cameraValue = _cameraController.initialize();
   }
 
@@ -28,7 +28,17 @@ class _IOSCameraState extends State<IOSCamera> {
     super.dispose();
   }
 
-  Future takePicture() async {}
+  Future<dynamic> takePicture() async {
+    try {
+      await _cameraController.setFlashMode(FlashMode.torch);
+      XFile picture = await _cameraController.takePicture();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => IOSImageSender(image: picture)));
+      await _cameraController.setFlashMode(FlashMode.off);
+    } on CameraException catch (e) {
+      debugPrint('Error Done while taking picture: $e');
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +68,7 @@ class _IOSCameraState extends State<IOSCamera> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
-                    onPressed: () {},
+                    onPressed: takePicture,
                     icon: const Icon(
                       Icons.image_outlined,
                       color: Colors.white,
@@ -67,20 +77,15 @@ class _IOSCameraState extends State<IOSCamera> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      if (!_cameraController.value.isInitialized) {
-                        return;
-                      }
-                      if (!_cameraController.value.isTakingPicture) {
-                        return;
-                      }
-
                       try {
-                        await _cameraController.setFlashMode(FlashMode.torch);
+                        print('clicked');
+                        await _cameraController.setFlashMode(FlashMode.always);
                         XFile picture = await _cameraController.takePicture();
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => IOSImageSender(image: picture)));
                         await _cameraController.setFlashMode(FlashMode.off);
-                      } on CameraException catch (e) {
-                        debugPrint('Error Done while taking picture: $e');
-                        return;
+                      } catch (e) {
+                        print('Error happend ${e.toString()}');
                       }
                     },
                     icon: const Icon(

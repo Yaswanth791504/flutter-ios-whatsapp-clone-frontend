@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class IOSSearchBar extends StatefulWidget {
-  const IOSSearchBar({super.key});
+  const IOSSearchBar({super.key, required this.controller, required this.onChanged});
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
 
   @override
   State<IOSSearchBar> createState() => _IOSSearchBarState();
@@ -16,11 +18,8 @@ class _IOSSearchBarState extends State<IOSSearchBar> {
       child: Padding(
         padding: const EdgeInsets.only(left: 15.0, right: 15.0),
         child: TextField(
-          onChanged: (String value) {
-            setState(() {
-              inputValue = value;
-            });
-          },
+          controller: widget.controller,
+          onChanged: widget.onChanged,
           decoration: InputDecoration(
             prefixIcon: const Icon(Icons.search),
             prefixIconColor: const Color(0xFF8e8e93),

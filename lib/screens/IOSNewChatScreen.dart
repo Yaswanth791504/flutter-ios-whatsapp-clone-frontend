@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:textz/components/IOSBottomNavigationBar.dart';
-import 'package:textz/components/IOSContact.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:textz/Api/userRequests.dart';
+import 'package:textz/Helpers/IOSHelpers.dart';
+import 'package:textz/components/IOSNewChat.dart';
 import 'package:textz/components/IOSSearchBar.dart';
-import 'package:textz/models/user.dart';
+import 'package:textz/main.dart';
+import 'package:textz/models/Friends.dart';
 
 class IOSNewChatScreen extends StatefulWidget {
   const IOSNewChatScreen({super.key});
@@ -12,6 +15,57 @@ class IOSNewChatScreen extends StatefulWidget {
 }
 
 class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
+  List<Friends> friends = [];
+  List<Friends> filteredList = [];
+  bool _isLoading = false;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchContacts();
+  }
+
+  Future<void> _fetchContacts() async {
+    if (await FlutterContacts.requestPermission()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        List<Contact> contacts = await FlutterContacts.getContacts(
+          withProperties: true,
+        );
+
+        var futures = contacts
+            .where((element) => element.phones.isNotEmpty)
+            .map((e) => IOSHelpers.getRefinedPhoneNumber(e.phones[0].number))
+            .map((number) => getUserContactsFromPhone(number))
+            .toList();
+
+        var results = await Future.wait(futures);
+        var nonNullFriends = results.whereType<Friends>().toList();
+
+        setState(() {
+          friends = nonNullFriends;
+          filteredList = nonNullFriends;
+          _isLoading = false;
+        });
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        print('Error fetching contacts: $e');
+      }
+    }
+  }
+
+  void getFilterList(String value) {
+    setState(() {
+      filteredList = friends.where((element) => element.name.contains(value)).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,98 +84,30 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
                     size: 40,
                   ),
                 ),
-                const IOSSearchBar(),
+                IOSSearchBar(
+                  controller: _searchController,
+                  onChanged: (String value) {
+                    getFilterList(value);
+                  },
+                ),
               ],
             ),
+            const SizedBox(height: 20),
             Expanded(
-                child: ListView(
-              children: [
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-                IOSContact(
-                  user: User(image: 'pic1.jpg', name: 'yaswanth', lastMessage: 'message', seen: false, time: 'ins'),
-                  newChat: true,
-                ),
-              ],
-            ))
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : filteredList.isNotEmpty
+                      ? ListView(
+                          children: filteredList.map((friend) {
+                            return IOSNewChat(friend: friend);
+                          }).toList(),
+                        )
+                      : const Center(
+                          child: Text("No Friend is Found"),
+                        ),
+            ),
           ],
         ),
       ),

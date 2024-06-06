@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:textz/components/IOSContact.dart';
 import 'package:textz/components/IOSHeader.dart';
+import 'package:textz/components/IOSNewChat.dart';
 import 'package:textz/components/IOSOptions.dart';
 import 'package:textz/components/IOSSearchBar.dart';
-import 'package:textz/models/user.dart';
+import 'package:textz/main.dart';
+import 'package:textz/models/Friends.dart';
 
 class IOSMainHomeScreen extends StatefulWidget {
   const IOSMainHomeScreen({super.key});
@@ -15,33 +14,8 @@ class IOSMainHomeScreen extends StatefulWidget {
 }
 
 class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
-  List<User> users = [
-    User(
-        name: 'Steve yaswanth Rodriguez',
-        lastMessage: 'There is a lot to talk about',
-        seen: true,
-        time: '4:16 PM',
-        image: 'pic1.jpg'),
-    User(name: 'Miles Thompson', lastMessage: 'I got you bro ', seen: false, time: '4:16 PM', image: 'pic2.jpg'),
-    User(
-        name: 'Amanda James',
-        lastMessage: 'Can’t wait for tomorrow ☺️😍😍',
-        seen: true,
-        time: '4:16 PM',
-        image: 'pic3.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Can you call?? 😕', seen: true, time: '4:16 PM', image: 'pic4.jpg'),
-    User(name: 'Holly', lastMessage: 'Party Night?', seen: false, time: '4:16 PM', image: 'pic5.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic6.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic7.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic8.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic9.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic10.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic11.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic12.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic13.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic14.jpg'),
-    User(name: 'Grace Teresa', lastMessage: 'Weekend Movie', seen: true, time: '4:16 PM', image: 'pic15.jpg'),
-  ];
+  List chats = [];
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +23,50 @@ class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const IOSHeader(screenName: "Chats"),
-        const IOSSearchBar(),
+        IOSSearchBar(
+          controller: _searchController,
+          onChanged: (String values) {},
+        ),
         const IOSOptions(),
         Flexible(
           flex: 13,
-          child: ListView(
-            children: users.map((user) => IOSContact(user: user)).toList(),
-          ),
+          child: chats.isNotEmpty
+              ? ListView(
+                  children: [
+                    IOSNewChat(
+                        friend: Friends(
+                      name: 'yaswanth',
+                      email: 'user@email.com',
+                      phone_number: '8106344135',
+                      about: 'anything',
+                      profile_picture:
+                          'https://res.cloudinary.com/drv13gs45/image/upload/v1717225334/ios-whatsapp/default.jpg',
+                    ))
+                  ],
+                )
+              : const Center(
+                  child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Click on the ',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                      ),
+                    ),
+                    Icon(
+                      Icons.edit_square,
+                      size: 32.0,
+                      color: blueAppColor,
+                    ),
+                    Text(
+                      ' to start chat on top right',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                      ),
+                    ),
+                  ],
+                )),
         )
       ],
     );

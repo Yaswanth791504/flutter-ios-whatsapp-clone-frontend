@@ -5,6 +5,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:textz/components/IOSBottomNavigationBar.dart';
 import 'package:textz/components/IOSIntroButton.dart';
 import 'package:textz/components/IOSTextFormField.dart';
+import 'package:textz/main.dart';
 import 'package:textz/screens/IOSIntroEditScreen.dart';
 
 class IOSIntroScreen extends StatefulWidget {
@@ -187,6 +188,7 @@ class _IOSIntroScreenState extends State<IOSIntroScreen> {
                           PhoneAuthCredential credential =
                               PhoneAuthProvider.credential(verificationId: phoneVerificationId, smsCode: code);
                           await auth.signInWithCredential(credential);
+                          phoneNumber.setNumber(_phoneNumberController.value.text.toString());
                           _introKey.currentState?.next();
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -207,7 +209,10 @@ class _IOSIntroScreenState extends State<IOSIntroScreen> {
           ),
           PageViewModel(
             titleWidget: const Text(''),
-            bodyWidget: IOSIntroEditScreen(pageController: _introKey),
+            bodyWidget: IOSIntroEditScreen(
+              pageController: _introKey,
+              phoneController: _phoneNumberController,
+            ),
           ),
         ],
         showNextButton: false,

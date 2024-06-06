@@ -1,16 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:textz/Api/userRequests.dart';
+import 'package:textz/Helpers/IOSHelpers.dart';
 import 'package:textz/components/IOSIntroButton.dart';
 import 'package:textz/components/IOSTextFormField.dart';
 import 'package:textz/main.dart';
+import 'package:textz/models/Profile.dart';
 import 'package:textz/screens/IOSHomeScreen.dart';
 
+import 'IOSEditScreen.dart';
+
 class IOSIntroEditScreen extends StatefulWidget {
-  const IOSIntroEditScreen({super.key, required this.pageController});
+  const IOSIntroEditScreen({super.key, required this.pageController, required this.phoneController});
   final GlobalKey<IntroductionScreenState> pageController;
+  final TextEditingController phoneController;
 
   @override
   State<IOSIntroEditScreen> createState() => _IOSIntroEditScreenState();
@@ -19,14 +23,21 @@ class IOSIntroEditScreen extends StatefulWidget {
 class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
-  File? imageString;
+  bool _isLoading = false;
+
+  String imageUri = 'http://res.cloudinary.com/drv13gs45/image/upload/v1717225161/ios-whatsapp/default.jpg';
 
   void _pickImageFromGallery() async {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-
     if (returnedImage == null) return;
     setState(() {
-      imageString = File(returnedImage.path);
+      _isLoading = true;
+    });
+    final imageLink = await IOSHelpers.uploadImage(returnedImage.path);
+
+    setState(() {
+      imageUri = imageLink!;
+      _isLoading = false;
     });
   }
 
@@ -40,10 +51,12 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
         ),
         GestureDetector(
           onTap: _pickImageFromGallery,
-          child: const CircleAvatar(
-            radius: 120,
-            backgroundImage: AssetImage('assets/images/pic1.jpg'),
-          ),
+          child: _isLoading
+              ? const CircularProgressIndicator()
+              : CircleAvatar(
+                  radius: 120,
+                  backgroundImage: NetworkImage(imageUri),
+                ),
         ),
         const SizedBox(
           height: 30,
@@ -71,8 +84,15 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
               ),
               IOSIntroButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
+                    if (_formKey.currentState!.validate() && !_isLoading) {
                       // widget.pageController.currentState?.next();
+                      profile = Profile(
+                          name: _controller.value.text.toString(),
+                          email: '',
+                          image: imageUri,
+                          phoneNumber: widget.phoneController.value.text.toString());
+
+                      createUser(profile!);
                       userPreference.setLoggedIn();
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const IOSHomeScreen()));
                     }

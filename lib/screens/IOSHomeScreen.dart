@@ -3,6 +3,7 @@ import "package:textz/components/IOSBottomNavigationBar.dart";
 import "package:textz/screens/IOSCameraScreen.dart";
 import "package:textz/screens/IOSEditScreen.dart";
 import "package:textz/screens/IOSNewChatScreen.dart";
+import "package:textz/screens/IOSSettingsScreen.dart";
 
 import 'IOSMainHomeScreen.dart';
 
@@ -89,7 +90,7 @@ class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProvider
           Text('calls'),
           IOSCameraScreen(),
           IOSMainHomeScreen(),
-          Text('settings'),
+          IOSSettingsScreen(),
         ],
       ),
       bottomNavigationBar: IOSBottomNavigationBar(

@@ -19,6 +19,12 @@ dependencies:
   flutter_otp_text_field: ^1.1.0+2
   firebase_core: ^2.32.0
   firebase_auth: ^4.20.0
+  flutter_contacts: ^1.1.8
+  cloudinary_flutter: ^1.0.0
+  cloudinary_url_gen: ^1.0.0
+  http: ^1.2.1
+  emoji_picker_flutter: ^2.2.0
+
 
 
 dev_dependencies:

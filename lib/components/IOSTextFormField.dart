@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:textz/components/IOSBottomNavigationBar.dart';
+import 'package:textz/main.dart';
 
 class IOSTextFormField extends StatefulWidget {
   const IOSTextFormField({
