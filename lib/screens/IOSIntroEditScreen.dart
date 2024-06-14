@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:textz/Api/userRequests.dart';
+import 'package:textz/Api/user_requests.dart';
 import 'package:textz/Helpers/IOSHelpers.dart';
+import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/components/IOSIntroButton.dart';
 import 'package:textz/components/IOSTextFormField.dart';
 import 'package:textz/main.dart';
@@ -52,7 +53,7 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
         GestureDetector(
           onTap: _pickImageFromGallery,
           child: _isLoading
-              ? const CircularProgressIndicator()
+              ? const IOSCircularProgressIndicator()
               : CircleAvatar(
                   radius: 120,
                   backgroundImage: NetworkImage(imageUri),
@@ -83,14 +84,14 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
                 height: 50,
               ),
               IOSIntroButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate() && !_isLoading) {
-                      // widget.pageController.currentState?.next();
                       profile = Profile(
-                          name: _controller.value.text.toString(),
-                          email: '',
-                          image: imageUri,
-                          phoneNumber: widget.phoneController.value.text.toString());
+                        name: _controller.value.text.toString(),
+                        email: '',
+                        image: imageUri,
+                        phoneNumber: widget.phoneController.value.text.toString(),
+                      );
 
                       createUser(profile!);
                       userPreference.setLoggedIn();

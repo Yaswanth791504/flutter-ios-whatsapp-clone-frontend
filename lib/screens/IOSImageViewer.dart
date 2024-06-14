@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:textz/Api/userRequests.dart';
+import 'package:textz/Api/user_requests.dart';
 import 'package:textz/Helpers/IOSHelpers.dart';
+import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/screens/IOSEditScreen.dart';
 
 class IOSImageViewer extends StatefulWidget {
@@ -83,7 +84,7 @@ class _IOSImageViewerState extends State<IOSImageViewer> {
       body: Center(
         child: !_isLoading
             ? (imageLink != null ? Image.network(imageLink!) : const Text('No image available'))
-            : const CircularProgressIndicator(),
+            : const IOSCircularProgressIndicator(),
       ),
     );
   }

@@ -18,7 +18,7 @@ class _IOSCameraState extends State<IOSCamera> {
   @override
   void initState() {
     super.initState();
-    _cameraController = CameraController(cameras[1], ResolutionPreset.high);
+    _cameraController = CameraController(cameras[0], ResolutionPreset.high);
     cameraValue = _cameraController.initialize();
   }
 

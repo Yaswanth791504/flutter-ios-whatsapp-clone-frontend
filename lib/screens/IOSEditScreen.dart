@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:textz/Api/userRequests.dart';
+import 'package:textz/Api/user_requests.dart';
 import 'package:textz/models/Profile.dart';
 import 'package:textz/screens/IOSImageViewer.dart';
 
@@ -170,6 +170,7 @@ class _IOSEditScreenState extends State<IOSEditScreen> {
                                       MaterialPageRoute(
                                         builder: (ctx) => IOSImageViewer(
                                           image: profile!.getImage(),
+                                          isProfile: true,
                                         ),
                                       ),
                                     );

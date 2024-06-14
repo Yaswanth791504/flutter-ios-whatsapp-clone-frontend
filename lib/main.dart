@@ -2,6 +2,8 @@ import 'package:camera/camera.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:textz/Api/firebase_notifications.dart';
+import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/models/UserPreference.dart';
 import 'package:textz/screens/IOSHomeScreen.dart';
 import 'package:textz/screens/IOSIntroScreen.dart';
@@ -18,8 +20,9 @@ void main() async {
   cameras = await availableCameras();
   await Firebase.initializeApp();
   userPreference.initializeLoggedIn();
-  if (await userPreference.isLoggedIn()) {}
+
   runApp(const MainApp());
+  await FirebaseNotifications().initNotifications();
 }
 
 class MainApp extends StatelessWidget {
@@ -44,7 +47,7 @@ class MainApp extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(
-                child: CircularProgressIndicator(),
+                child: IOSCircularProgressIndicator(),
               ),
             );
           } else if (snapshot.hasError) {

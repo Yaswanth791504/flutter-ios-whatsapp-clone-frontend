@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:textz/components/IOSBottomNavigationBar.dart';
+import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/components/IOSIntroButton.dart';
 import 'package:textz/components/IOSTextFormField.dart';
 import 'package:textz/main.dart';
@@ -120,7 +120,7 @@ class _IOSIntroScreenState extends State<IOSIntroScreen> {
                   height: 50.0,
                 ),
                 _isLoading
-                    ? const CircularProgressIndicator()
+                    ? const IOSCircularProgressIndicator()
                     : IOSIntroButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {

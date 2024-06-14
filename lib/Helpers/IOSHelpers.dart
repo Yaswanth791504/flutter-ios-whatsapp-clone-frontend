@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 
 class IOSHelpers {
-  static Future<String?> uploadImage(String imageSource) async {
+  static Future<String> uploadImage(String imageSource) async {
     final Uri uri = Uri.parse('https://api.cloudinary.com/v1_1/drv13gs45/upload');
     const String preset = 'lqdv51ug';
 
@@ -26,7 +26,7 @@ class IOSHelpers {
       return jsonMap['secure_url'];
     } else {
       print('Something went wrong: ${response.statusCode}');
-      return null;
+      return '';
     }
   }
 

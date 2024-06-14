@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
 import "package:textz/components/IOSBottomNavigationBar.dart";
+import "package:textz/screens/IOSCallScreen.dart";
 import "package:textz/screens/IOSCameraScreen.dart";
 import "package:textz/screens/IOSEditScreen.dart";
 import "package:textz/screens/IOSNewChatScreen.dart";
 import "package:textz/screens/IOSSettingsScreen.dart";
+import "package:textz/screens/IOSStatusScreen.dart";
 
 import 'IOSMainHomeScreen.dart';
 
@@ -86,8 +88,8 @@ class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProvider
       body: TabBarView(
         controller: _controller,
         children: const <Widget>[
-          Text('status'),
-          Text('calls'),
+          IOSStatusScreen(),
+          IOSCallScreen(),
           IOSCameraScreen(),
           IOSMainHomeScreen(),
           IOSSettingsScreen(),

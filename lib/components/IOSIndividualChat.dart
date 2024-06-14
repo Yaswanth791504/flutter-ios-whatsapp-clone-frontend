@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:textz/models/Friends.dart';
+import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/screens/IOSChatScreen.dart';
 
 class IOSIndividualChat extends StatefulWidget {
   const IOSIndividualChat({super.key, required this.friend});
-  final Friends friend;
+  final IndividualChat friend;
 
   @override
   State<IOSIndividualChat> createState() => _IOSIndividualChat();
@@ -72,10 +72,17 @@ class _IOSIndividualChat extends State<IOSIndividualChat> {
                         ),
                         Row(
                           children: <Widget>[
+                            if (widget.friend.last_message_type.toLowerCase() == 'image') ...[
+                              const Icon(
+                                Icons.image,
+                                color: Color(0xFF7B7B7B),
+                              ), // Show image icon
+                              const SizedBox(width: 4), // Space between icon and text
+                            ],
                             Text(
-                              widget.friend.about.length < 20
-                                  ? widget.friend.about
-                                  : "${widget.friend.about.substring(0, 19)}...",
+                              widget.friend.last_message.length < 20
+                                  ? widget.friend.last_message // Full message if shorter than 20 chars
+                                  : "${widget.friend.last_message.substring(0, 19)}...", // Truncate if longer
                               style: const TextStyle(
                                 fontSize: 17.0,
                                 color: Color(0xFF7B7B7B),
@@ -85,6 +92,12 @@ class _IOSIndividualChat extends State<IOSIndividualChat> {
                           ],
                         )
                       ],
+                    ),
+                  ),
+                  Text(
+                    '${DateTime.parse(widget.friend.last_message_time).minute.toString()}:${DateTime.parse(widget.friend.last_message_time).second.toString()}',
+                    style: const TextStyle(
+                      fontSize: 17,
                     ),
                   ),
                   const Icon(

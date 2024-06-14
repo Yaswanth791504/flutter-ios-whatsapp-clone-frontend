@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:textz/Api/userRequests.dart';
+import 'package:textz/Api/user_requests.dart';
 import 'package:textz/Helpers/IOSHelpers.dart';
+import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/components/IOSNewChat.dart';
 import 'package:textz/components/IOSSearchBar.dart';
 import 'package:textz/main.dart';
-import 'package:textz/models/Friends.dart';
+import 'package:textz/models/IndividualChat.dart';
 
 class IOSNewChatScreen extends StatefulWidget {
   const IOSNewChatScreen({super.key});
@@ -15,8 +16,8 @@ class IOSNewChatScreen extends StatefulWidget {
 }
 
 class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
-  List<Friends> friends = [];
-  List<Friends> filteredList = [];
+  List<IndividualChat> friends = [];
+  List<IndividualChat> filteredList = [];
   bool _isLoading = false;
   final TextEditingController _searchController = TextEditingController();
 
@@ -36,7 +37,7 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
         List<Contact> contacts = await FlutterContacts.getContacts(
           withProperties: true,
         );
-
+        // print(contacts);
         var futures = contacts
             .where((element) => element.phones.isNotEmpty)
             .map((e) => IOSHelpers.getRefinedPhoneNumber(e.phones[0].number))
@@ -44,7 +45,9 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
             .toList();
 
         var results = await Future.wait(futures);
-        var nonNullFriends = results.whereType<Friends>().toList();
+        print(results);
+        // print(results[1]!.name);
+        var nonNullFriends = results.whereType<IndividualChat>().toList();
 
         setState(() {
           friends = nonNullFriends;
@@ -62,7 +65,11 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
 
   void getFilterList(String value) {
     setState(() {
+      _isLoading = true;
+    });
+    setState(() {
       filteredList = friends.where((element) => element.name.contains(value)).toList();
+      _isLoading = false;
     });
   }
 
@@ -96,7 +103,7 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
             Expanded(
               child: _isLoading
                   ? const Center(
-                      child: CircularProgressIndicator(),
+                      child: IOSCircularProgressIndicator(),
                     )
                   : filteredList.isNotEmpty
                       ? ListView(

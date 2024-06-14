@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:textz/main.dart';
-import 'package:textz/models/Friends.dart';
+import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/screens/IOSImageViewer.dart';
 
 class IOSUserProfile extends StatefulWidget {
   const IOSUserProfile({super.key, required this.friend});
-  final Friends friend;
+  final IndividualChat friend;
 
   @override
   State<IOSUserProfile> createState() => _IOSUserProfileState();

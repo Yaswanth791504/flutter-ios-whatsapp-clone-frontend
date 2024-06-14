@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:textz/models/Friends.dart';
+import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/screens/IOSChatScreen.dart';
 
 class IOSNewChat extends StatefulWidget {
   const IOSNewChat({super.key, required this.friend});
-  final Friends friend;
+  final IndividualChat friend;
 
   @override
   State<IOSNewChat> createState() => _IOSNewChat();
