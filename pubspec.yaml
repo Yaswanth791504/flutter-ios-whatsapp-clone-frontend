@@ -30,9 +30,8 @@ dependencies:
   photo_view: ^0.15.0
   firebase_messaging: ^14.9.4
   socket_io_client: ^2.0.3+1
-
-
-
+  agora_rtc_engine: ^6.3.2
+  story_view: ^0.16.5
 
 dev_dependencies:
   flutter_test:

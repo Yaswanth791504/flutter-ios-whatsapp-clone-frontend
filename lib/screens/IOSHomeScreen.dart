@@ -20,7 +20,7 @@ class IOSHomeScreen extends StatefulWidget {
 
 class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProviderStateMixin {
   late TabController _controller;
-  int initialIndex = 3;
+  int initialIndex = 0;
 
   @override
   void initState() {

@@ -37,7 +37,7 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
     final imageLink = await IOSHelpers.uploadImage(returnedImage.path);
 
     setState(() {
-      imageUri = imageLink!;
+      imageUri = imageLink;
       _isLoading = false;
     });
   }

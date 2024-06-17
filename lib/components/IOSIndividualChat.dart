@@ -13,6 +13,7 @@ class IOSIndividualChat extends StatefulWidget {
 class _IOSIndividualChat extends State<IOSIndividualChat> {
   @override
   Widget build(BuildContext context) {
+    // print(widget.friend.last_message_type);
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -81,8 +82,8 @@ class _IOSIndividualChat extends State<IOSIndividualChat> {
                             ],
                             Text(
                               widget.friend.last_message.length < 20
-                                  ? widget.friend.last_message // Full message if shorter than 20 chars
-                                  : "${widget.friend.last_message.substring(0, 19)}...", // Truncate if longer
+                                  ? widget.friend.last_message
+                                  : "${widget.friend.last_message.substring(0, 19)}...",
                               style: const TextStyle(
                                 fontSize: 17.0,
                                 color: Color(0xFF7B7B7B),

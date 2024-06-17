@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:textz/main.dart';
 import 'package:textz/screens/IOSImageSender.dart';
 
@@ -68,7 +70,20 @@ class _IOSCameraState extends State<IOSCamera> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
-                    onPressed: takePicture,
+                    onPressed: () async {
+                      final permission = await PhotoManager.requestPermissionExtend();
+                      if (permission.isAuth) {
+                        final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        if (file != null) {
+                          Navigator.push(context, MaterialPageRoute(builder: (builder) => IOSImageSender(image: file)));
+                        } else {
+                          print('Something happened');
+                        }
+                      } else {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(content: Text('Permission is denied')));
+                      }
+                    },
                     icon: const Icon(
                       Icons.image_outlined,
                       color: Colors.white,
@@ -78,7 +93,6 @@ class _IOSCameraState extends State<IOSCamera> {
                   IconButton(
                     onPressed: () async {
                       try {
-                        print('clicked');
                         await _cameraController.setFlashMode(FlashMode.always);
                         XFile picture = await _cameraController.takePicture();
                         Navigator.push(

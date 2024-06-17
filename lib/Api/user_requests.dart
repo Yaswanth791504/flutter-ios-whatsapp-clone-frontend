@@ -126,13 +126,22 @@ Future<List<dynamic>?> getChats() async {
     final number = await phoneNumber.getNumber();
     final response = await http.get(Uri.parse('$backEndUri/user/chats?phone_number=$number'));
     List<dynamic> result = await jsonDecode(response.body);
+
     List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
-    result.map((e) {
-      e['name'] = contacts
-          .where((element) => IOSHelpers.getRefinedPhoneNumber(element.phones[0].number) == e['phone_number'])
-          .toList()[0]
+    result = result.where((chat) {
+      String? chatPhoneNumber = chat['phone_number'];
+      return contacts.any((contact) => IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) == chatPhoneNumber);
+    }).map((chat) {
+      String? chatPhoneNumber = chat['phone_number'];
+      String? displayName = contacts
+          .firstWhere(
+            (contact) => IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) == chatPhoneNumber,
+          )
           .displayName;
+
+      return {...chat, 'name': displayName};
     }).toList();
+    print(result);
     return result;
   } catch (e) {
     // print('Error - $e');

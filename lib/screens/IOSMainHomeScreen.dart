@@ -18,16 +18,7 @@ class IOSMainHomeScreen extends StatefulWidget {
 }
 
 class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
-  List<dynamic> chats = [
-    {
-      "name": "yaswanth",
-      "phone_number": "8106344135",
-      "about": "anything",
-      "last_message": "something",
-      "last_message_time": DateTime.now().toString(),
-      "profile_picture": "http://res.cloudinary.com/drv13gs45/image/upload/v1717225161/ios-whatsapp/default.jpg"
-    }
-  ];
+  List<dynamic> chats = [];
   final TextEditingController _searchController = TextEditingController();
   Timer? _refreshTimer;
 
@@ -53,6 +44,7 @@ class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
 
   Future<void> _fetchChats() async {
     final userFriendChats = await getChats();
+    // print(userFriendChats);
     setState(() {
       chats = userFriendChats ?? [];
     });
