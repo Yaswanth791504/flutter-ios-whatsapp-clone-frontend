@@ -27,8 +27,9 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.textz"
-    compileSdk flutter.compileSdkVersion
+    compileSdk 34
     ndkVersion flutter.ndkVersion
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -67,4 +68,4 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+

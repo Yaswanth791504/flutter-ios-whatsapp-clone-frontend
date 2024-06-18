@@ -3,9 +3,11 @@ class FriendStatus {
   final String text;
   final String statusType;
   final String uploadedAt;
+  final String statusTextColor;
 
   FriendStatus({
     required this.mediaLink,
+    required this.statusTextColor,
     required this.text,
     required this.statusType,
     required this.uploadedAt,
@@ -17,6 +19,27 @@ class FriendStatus {
       text: json['text'] ?? '',
       statusType: json['status_type'],
       uploadedAt: json['uploaded_at'],
+      statusTextColor: json['color'],
+    );
+  }
+}
+
+class MyStatus extends FriendStatus {
+  MyStatus({
+    required super.mediaLink,
+    required super.statusTextColor,
+    required super.text,
+    required super.statusType,
+    required super.uploadedAt,
+  });
+
+  factory MyStatus.fromJson(Map<String, dynamic> json) {
+    return MyStatus(
+      mediaLink: json['media_link'] ?? '',
+      text: json['text'] ?? '',
+      statusType: json['status_type'],
+      uploadedAt: json['uploaded_at'],
+      statusTextColor: json['color'],
     );
   }
 }

@@ -7,26 +7,38 @@ import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/models/UserPreference.dart';
 import 'package:textz/screens/IOSHomeScreen.dart';
 import 'package:textz/screens/IOSIntroScreen.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 List<CameraDescription> cameras = [];
 UserPreference userPreference = UserPreference();
 PhoneNumber phoneNumber = PhoneNumber();
 Cloudinary cloudinary = Cloudinary.fromCloudName(cloudName: 'drv13gs45');
-
+final navigatorKey = GlobalKey<NavigatorState>();
 const Color blueAppColor = Color(0xFF1067FF);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
   cameras = await availableCameras();
   await Firebase.initializeApp();
   userPreference.initializeLoggedIn();
 
-  runApp(const MainApp());
   await FirebaseNotifications().initNotifications();
+
+  ZegoUIKit().initLog().then((value) {
+    ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
+      [ZegoUIKitSignalingPlugin()],
+    );
+
+    runApp(MainApp(navigatorKey: navigatorKey));
+  });
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp({super.key, required this.navigatorKey});
+
+  final GlobalKey<NavigatorState> navigatorKey;
 
   Future<bool> _checkLoginStatus() async {
     return await userPreference.isLoggedIn();
@@ -35,6 +47,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: const Color(0xFFF8F7F7),

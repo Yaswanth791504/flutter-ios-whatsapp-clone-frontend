@@ -6,7 +6,8 @@ import 'package:textz/main.dart';
 import 'package:textz/screens/IOSImageSender.dart';
 
 class IOSCamera extends StatefulWidget {
-  const IOSCamera({super.key});
+  const IOSCamera({super.key, required this.onPressed});
+  final onPressed;
 
   @override
   State<IOSCamera> createState() => _IOSCameraState();
@@ -34,7 +35,13 @@ class _IOSCameraState extends State<IOSCamera> {
     try {
       await _cameraController.setFlashMode(FlashMode.torch);
       XFile picture = await _cameraController.takePicture();
-      Navigator.push(context, MaterialPageRoute(builder: (context) => IOSImageSender(image: picture)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => IOSImageSender(
+                    image: picture,
+                    onPressed: widget.onPressed,
+                  )));
       await _cameraController.setFlashMode(FlashMode.off);
     } on CameraException catch (e) {
       debugPrint('Error Done while taking picture: $e');
@@ -75,7 +82,15 @@ class _IOSCameraState extends State<IOSCamera> {
                       if (permission.isAuth) {
                         final file = await ImagePicker().pickImage(source: ImageSource.gallery);
                         if (file != null) {
-                          Navigator.push(context, MaterialPageRoute(builder: (builder) => IOSImageSender(image: file)));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (builder) => IOSImageSender(
+                                image: file,
+                                onPressed: widget.onPressed,
+                              ),
+                            ),
+                          );
                         } else {
                           print('Something happened');
                         }
@@ -96,7 +111,12 @@ class _IOSCameraState extends State<IOSCamera> {
                         await _cameraController.setFlashMode(FlashMode.always);
                         XFile picture = await _cameraController.takePicture();
                         Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => IOSImageSender(image: picture)));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => IOSImageSender(
+                                      image: picture,
+                                      onPressed: () {},
+                                    )));
                         await _cameraController.setFlashMode(FlashMode.off);
                       } catch (e) {
                         print('Error happend ${e.toString()}');

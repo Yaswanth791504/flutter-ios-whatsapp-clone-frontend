@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textz/Helpers/IOSHelpers.dart';
 import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/screens/IOSChatScreen.dart';
 
@@ -96,7 +97,7 @@ class _IOSIndividualChat extends State<IOSIndividualChat> {
                     ),
                   ),
                   Text(
-                    '${DateTime.parse(widget.friend.last_message_time).minute.toString()}:${DateTime.parse(widget.friend.last_message_time).second.toString()}',
+                    IOSHelpers.getTimeString(widget.friend.last_message_time),
                     style: const TextStyle(
                       fontSize: 17,
                     ),

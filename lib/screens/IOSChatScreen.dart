@@ -15,7 +15,7 @@ import 'package:textz/screens/IOSUserProfile.dart';
 const Color blueAppColor = Color(0xFF007AFF);
 
 class IOSChatScreen extends StatefulWidget {
-  const IOSChatScreen({Key? key, required this.friend}) : super(key: key);
+  const IOSChatScreen({super.key, required this.friend});
   final IndividualChat friend;
 
   @override
@@ -197,7 +197,7 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
             icon: const Icon(
               Icons.videocam_outlined,
               color: blueAppColor,
-              size: 45.0,
+              size: 35.0, // Adjusted size
             ),
           ),
           IconButton(
@@ -205,7 +205,7 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
             icon: const Icon(
               Icons.call_outlined,
               color: blueAppColor,
-              size: 35.0,
+              size: 35.0, // Adjusted size
             ),
           )
         ],
@@ -244,18 +244,18 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                       padding: EdgeInsets.only(bottom: bottomPadding),
                       itemCount: messages?.length,
                       itemBuilder: (context, index) {
-                        if (messages![index].messageType.toLowerCase() == 'image') {
-                          return IOSImageMessage(
-                            image: messages![index].message,
-                            sent: messages![index].sent,
-                          );
-                        }
-                        return ListTile(
-                          title: IOSMessage(
-                            message: messages![index].message,
-                            sent: messages![index].sent,
-                            time: messages![index].timeStamp,
-                          ),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5.0),
+                          child: messages![index].messageType.toLowerCase() == 'image'
+                              ? IOSImageMessage(
+                                  image: messages![index].message,
+                                  sent: messages![index].sent,
+                                )
+                              : IOSMessage(
+                                  message: messages![index].message,
+                                  sent: messages![index].sent,
+                                  time: messages![index].timeStamp,
+                                ),
                         );
                       },
                     ),
@@ -333,7 +333,14 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                         ),
                         IconButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const IOSCamera()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const IOSCamera(
+                                  onPressed: null,
+                                ),
+                              ),
+                            );
                           },
                           icon: const Icon(
                             Icons.camera_alt_outlined,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:textz/Helpers/IOSHelpers.dart';
 
 class IOSMessage extends StatelessWidget {
   const IOSMessage({super.key, required this.message, this.sent = false, required this.time});
@@ -39,7 +40,7 @@ class IOSMessage extends StatelessWidget {
               ),
             ),
             Text(
-              '${DateTime.parse(time).minute.toString()}:${DateTime.parse(time).second.toString()}',
+              IOSHelpers.getTimeString(time, false),
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 10,

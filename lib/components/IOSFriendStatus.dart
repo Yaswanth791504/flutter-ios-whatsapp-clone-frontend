@@ -4,6 +4,8 @@ import 'package:textz/Helpers/IOSHelpers.dart';
 import 'package:textz/models/Status.dart';
 import 'package:textz/screens/IOSStatusViewer.dart';
 
+import 'StoryIndicatorPainter.dart';
+
 class IosFriendStatus extends StatefulWidget {
   const IosFriendStatus({super.key, required this.status});
   final Status status;
@@ -18,17 +20,25 @@ class _IosFriendStatusState extends State<IosFriendStatus> {
 
   void _generateStoryItems() {
     List<StoryItem> stories = widget.status.status.map((ele) {
+      Color backgroundColor;
+      try {
+        backgroundColor = Color(int.parse(ele.statusTextColor));
+      } catch (e) {
+        backgroundColor = Colors.redAccent;
+      }
+
       switch (ele.statusType) {
         case 'text':
           return StoryItem.text(
             title: ele.text ?? '',
-            backgroundColor: Colors.redAccent,
+            backgroundColor: backgroundColor,
+            duration: const Duration(seconds: 5),
           );
         case 'media':
-          print(ele.mediaLink);
           return StoryItem.pageImage(
             url: ele.mediaLink ?? '',
             controller: controller,
+            duration: const Duration(seconds: 10),
           );
         default:
           return StoryItem.text(
@@ -37,6 +47,7 @@ class _IosFriendStatusState extends State<IosFriendStatus> {
           );
       }
     }).toList();
+
     setState(() {
       storyItems = stories;
     });
@@ -74,9 +85,25 @@ class _IosFriendStatusState extends State<IosFriendStatus> {
         ),
         child: Row(
           children: <Widget>[
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.status.profilePicture),
-              radius: 30,
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.status.profilePicture),
+                  radius: 30,
+                  onBackgroundImageError: (_, __) {
+                    debugPrint('Failed to load profile picture');
+                  },
+                ),
+                CustomPaint(
+                  size: const Size(70, 70),
+                  painter: StoryIndicatorPainter(
+                    numSegments: storyItems.length,
+                    strokeWidth: 3.0,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 30,

@@ -5,7 +5,8 @@ import 'package:textz/Api/statusRequests.dart';
 import 'package:textz/main.dart';
 
 class IOSStatusTextScreen extends StatefulWidget {
-  const IOSStatusTextScreen({super.key});
+  const IOSStatusTextScreen({super.key, required this.refreshFunc});
+  final refreshFunc;
 
   @override
   State<IOSStatusTextScreen> createState() => _IOSStatusTextScreenState();
@@ -70,6 +71,7 @@ class _IOSStatusTextScreenState extends State<IOSStatusTextScreen> {
               onTap: () async {
                 if (_formKey.currentState!.validate()) {
                   uploadTextStatus(_controller.text.trim(), color);
+                  widget.refreshFunc();
                   Navigator.pop(context);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error Occurred')));

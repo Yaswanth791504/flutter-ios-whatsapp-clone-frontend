@@ -6,6 +6,9 @@ import "package:textz/screens/IOSEditScreen.dart";
 import "package:textz/screens/IOSNewChatScreen.dart";
 import "package:textz/screens/IOSSettingsScreen.dart";
 import "package:textz/screens/IOSStatusScreen.dart";
+import "package:textz/settings.dart";
+import "package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart";
+import "package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart";
 
 import 'IOSMainHomeScreen.dart';
 
@@ -20,10 +23,24 @@ class IOSHomeScreen extends StatefulWidget {
 
 class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProviderStateMixin {
   late TabController _controller;
-  int initialIndex = 0;
+  int initialIndex = 3;
+
+  void initZegoCloud() async {
+    final userProfile = profile;
+    if (userProfile != null) {
+      ZegoUIKitPrebuiltCallInvitationService().init(
+        appID: appId,
+        appSign: appSign,
+        userID: userProfile.getPhoneNumber(),
+        userName: userProfile.getPhoneNumber(),
+        plugins: [ZegoUIKitSignalingPlugin()],
+      );
+    }
+  }
 
   @override
   void initState() {
+    initZegoCloud();
     super.initState();
     _controller = TabController(length: 5, vsync: this, initialIndex: initialIndex);
     _controller.addListener(_handleScreenChange);
@@ -33,6 +50,12 @@ class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProvider
     setState(() {
       initialIndex = _controller.index;
     });
+  }
+
+  @override
+  void dispose() {
+    ZegoUIKitPrebuiltCallInvitationService().uninit();
+    super.dispose();
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -47,4 +48,36 @@ Future<List<Status>?> getStatus() async {
     print('Error: ${e.toString()}');
   }
   return null;
+}
+
+Future<List<MyStatus>?> getMyStatus() async {
+  try {
+    final number = await phoneNumber.getNumber();
+    final request = await http.get(Uri.parse('$backEndUri/status/my?phone_number=$number'));
+    List<dynamic> statuses = await jsonDecode(request.body);
+    List<MyStatus> myStatus = statuses.map((ele) => MyStatus.fromJson(ele)).toList();
+    return myStatus;
+  } catch (e) {
+    print('Something went wrong: ${e.toString()}');
+  }
+  return null;
+}
+
+Future<void> uploadImageStatus(String imageSource) async {
+  print('this method is called');
+  try {
+    final number = await phoneNumber.getNumber();
+    final imageLink = await IOSHelpers.uploadImage(imageSource);
+    print(imageLink);
+    final request = await http.post(Uri.parse('$backEndUri/status/media?phone_number=$number'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "media_link": imageLink,
+        }));
+    if (request.statusCode == 201) {
+      print('Image Saved');
+    }
+  } catch (e) {
+    print('Something had happened ${e.toString()}');
+  }
 }

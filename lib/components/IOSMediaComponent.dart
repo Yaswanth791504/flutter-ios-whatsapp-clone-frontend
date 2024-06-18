@@ -78,7 +78,12 @@ class IOSMediaComponent extends StatelessWidget {
                         icon: Icons.camera_alt_outlined,
                         title: "Camera",
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const IOSCamera()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => IOSCamera(
+                                        onPressed: () {},
+                                      )));
                         }),
                     IOSListTile(
                       icon: Icons.image_outlined,

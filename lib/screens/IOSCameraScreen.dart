@@ -11,6 +11,8 @@ class IOSCameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<IOSCameraScreen> {
   @override
   Widget build(BuildContext context) {
-    return const IOSCamera();
+    return IOSCamera(
+      onPressed: () {},
+    );
   }
 }
