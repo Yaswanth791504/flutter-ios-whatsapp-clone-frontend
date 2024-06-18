@@ -111,7 +111,7 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
@@ -142,7 +142,6 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double bottomInset = MediaQuery.of(context).viewInsets.bottom;
     double bottomPadding = (_isEmojiVisible ? 350 : 0) + 70;
 
     return Scaffold(
