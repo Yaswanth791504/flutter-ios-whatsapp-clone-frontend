@@ -34,19 +34,16 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
       });
 
       try {
-        List<Contact> contacts = await FlutterContacts.getContacts(
-          withProperties: true,
-        );
-        // print(contacts);
+        List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
         var futures = contacts
             .where((element) => element.phones.isNotEmpty)
             .map((e) => IOSHelpers.getRefinedPhoneNumber(e.phones[0].number))
-            .map((number) => getUserContactsFromPhone(number))
-            .toList();
+            .map((number) async {
+          final data = await getUserContactsFromPhone(number);
+          return data;
+        }).toList();
 
         var results = await Future.wait(futures);
-        print(results);
-        // print(results[1]!.name);
         var nonNullFriends = results.whereType<IndividualChat>().toList();
 
         setState(() {
@@ -65,11 +62,7 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
 
   void getFilterList(String value) {
     setState(() {
-      _isLoading = true;
-    });
-    setState(() {
-      filteredList = friends.where((element) => element.name.contains(value)).toList();
-      _isLoading = false;
+      filteredList = friends.where((element) => element.name.toLowerCase().contains(value.toLowerCase())).toList();
     });
   }
 
@@ -102,18 +95,14 @@ class _IOSNewChatScreenState extends State<IOSNewChatScreen> {
             const SizedBox(height: 20),
             Expanded(
               child: _isLoading
-                  ? const Center(
-                      child: IOSCircularProgressIndicator(),
-                    )
+                  ? const Center(child: IOSCircularProgressIndicator())
                   : filteredList.isNotEmpty
                       ? ListView(
                           children: filteredList.map((friend) {
                             return IOSNewChat(friend: friend);
                           }).toList(),
                         )
-                      : const Center(
-                          child: Text("No Friend is Found"),
-                        ),
+                      : const Center(child: Text("No Friend is Found")),
             ),
           ],
         ),

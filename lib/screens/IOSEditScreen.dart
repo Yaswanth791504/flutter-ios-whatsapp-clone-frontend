@@ -93,6 +93,7 @@ class _IOSEditScreenState extends State<IOSEditScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F7F7),
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leadingWidth: 120,
         leading: GestureDetector(
           onTap: () {

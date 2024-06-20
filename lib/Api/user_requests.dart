@@ -10,6 +10,7 @@ import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/models/Message.dart';
 import 'package:textz/models/Profile.dart';
 
+// const String backEndUri = 'https://fastapi-ios-whatsapp-clone-backend.onrender.com';
 const String backEndUri = 'http://10.0.2.2:8000';
 
 void createUser(Profile profile) async {
@@ -40,27 +41,34 @@ Future<IndividualChat?> getUserContactsFromPhone(String phoneNumber) async {
         "Content-Type": "application/json",
       },
     );
-    Map<String, dynamic> data = jsonDecode(response.body);
-    List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
-    if (data.containsKey('details')) {
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(response.body);
+      if (data.containsKey('details')) {
+        return null;
+      }
+      List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+      var contact = contacts.firstWhere(
+        (element) => IOSHelpers.getRefinedPhoneNumber(element.phones[0].number) == data['phone_number'],
+      );
+      data['name'] = contact.displayName;
+      print(phoneNumber + data.toString());
+      return IndividualChat(
+        name: data['name'],
+        email: data['email'],
+        phone_number: data['phone_number'],
+        about: data['about'],
+        profile_picture: data['profile_picture'],
+        last_message: '',
+        last_message_time: '',
+        last_message_type: '',
+      );
+    } else {
+      print('$phoneNumber Failed to fetch user details: ${response.statusCode}');
       return null;
     }
-    data['name'] = contacts
-        .where((element) => IOSHelpers.getRefinedPhoneNumber(element.phones[0].number) == data['phone_number'])
-        .toList()[0]
-        .displayName;
-    return IndividualChat(
-      name: data['name'],
-      email: data['email'],
-      phone_number: data['phone_number'],
-      about: data['about'],
-      profile_picture: data['profile_picture'],
-      last_message: '',
-      last_message_time: '',
-      last_message_type: '',
-    );
   } catch (e) {
-    // print('Error: $e');
+    print('Error: $e');
     return null;
   }
 }
