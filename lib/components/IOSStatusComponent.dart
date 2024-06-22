@@ -152,10 +152,11 @@ class _IOSStatusComponentState extends State<IOSStatusComponent> {
                       backgroundColor: blueAppColor,
                     ),
                     onPressed: () {
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (builder) => IOSStatusTextScreen(refreshFunc: widget.refreshFunc)));
+                              builder: (builder) => IOSStatusTextScreen(refreshFunc: widget.refreshFunc)),);
                     },
                     icon: const Icon(
                       Icons.edit,

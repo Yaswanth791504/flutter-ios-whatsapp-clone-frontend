@@ -47,9 +47,12 @@ Future<IndividualChat?> getUserContactsFromPhone(String phoneNumber) async {
       if (data.containsKey('details')) {
         return null;
       }
-      List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+      List<Contact> contacts =
+          await FlutterContacts.getContacts(withProperties: true);
       var contact = contacts.firstWhere(
-        (element) => IOSHelpers.getRefinedPhoneNumber(element.phones[0].number) == data['phone_number'],
+        (element) =>
+            IOSHelpers.getRefinedPhoneNumber(element.phones[0].number) ==
+            data['phone_number'],
       );
       data['name'] = contact.displayName;
       print(phoneNumber + data.toString());
@@ -64,7 +67,8 @@ Future<IndividualChat?> getUserContactsFromPhone(String phoneNumber) async {
         last_message_type: '',
       );
     } else {
-      print('$phoneNumber Failed to fetch user details: ${response.statusCode}');
+      print(
+          '$phoneNumber Failed to fetch user details: ${response.statusCode}');
       return null;
     }
   } catch (e) {
@@ -76,7 +80,8 @@ Future<IndividualChat?> getUserContactsFromPhone(String phoneNumber) async {
 Future<Profile?> getCurrentUser() async {
   try {
     final String number = await phoneNumber.getNumber();
-    final request = await http.get(Uri.parse('$backEndUri/user/get?phone_number=$number'));
+    final request =
+        await http.get(Uri.parse('$backEndUri/user/get?phone_number=$number'));
     Map<String, dynamic> data = jsonDecode(request.body);
     return Profile(
       email: data['email'],
@@ -110,7 +115,8 @@ Future<String?> updateProfileImage(String image) async {
   }
 }
 
-Future<Map<String, dynamic>?> updateUserDetails(String name, String about, String number) async {
+Future<Map<String, dynamic>?> updateUserDetails(
+    String name, String about, String number) async {
   try {
     final number = await phoneNumber.getNumber();
     final request = await http.put(
@@ -132,18 +138,24 @@ Future<Map<String, dynamic>?> updateUserDetails(String name, String about, Strin
 Future<List<dynamic>?> getChats() async {
   try {
     final number = await phoneNumber.getNumber();
-    final response = await http.get(Uri.parse('$backEndUri/user/chats?phone_number=$number'));
+    final response = await http
+        .get(Uri.parse('$backEndUri/user/chats?phone_number=$number'));
     List<dynamic> result = await jsonDecode(response.body);
 
-    List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true);
+    List<Contact> contacts =
+        await FlutterContacts.getContacts(withProperties: true);
     result = result.where((chat) {
       String? chatPhoneNumber = chat['phone_number'];
-      return contacts.any((contact) => IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) == chatPhoneNumber);
+      return contacts.any((contact) =>
+          IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) ==
+          chatPhoneNumber);
     }).map((chat) {
       String? chatPhoneNumber = chat['phone_number'];
       String? displayName = contacts
           .firstWhere(
-            (contact) => IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) == chatPhoneNumber,
+            (contact) =>
+                IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) ==
+                chatPhoneNumber,
           )
           .displayName;
 
@@ -160,8 +172,8 @@ Future<List<dynamic>?> getChats() async {
 Future<List<Message>?> getChatMessages(String friendNumber) async {
   try {
     final userNumber = await phoneNumber.getNumber();
-    final response = await http
-        .get(Uri.parse('$backEndUri/user/messages?user_phone_number=$userNumber&friend_phone_number=$friendNumber'));
+    final response = await http.get(Uri.parse(
+        '$backEndUri/user/messages?user_phone_number=$userNumber&friend_phone_number=$friendNumber'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);

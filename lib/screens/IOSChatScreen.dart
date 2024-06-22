@@ -1,6 +1,7 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:textz/Api/call_requests.dart';
 import 'package:textz/Api/sockets.dart';
 import 'package:textz/Api/user_requests.dart';
 import 'package:textz/components/IOSCamera.dart';
@@ -11,6 +12,13 @@ import 'package:textz/components/IOSMessage.dart';
 import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/models/Message.dart';
 import 'package:textz/screens/IOSUserProfile.dart';
+import 'package:textz/screens/IOSZegoCallScreen.dart';
+import 'package:textz/screens/IOSZegoVideoCallScreen.dart';
+import 'package:textz/settings.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
+
+import 'IOSEditScreen.dart';
 
 const Color blueAppColor = Color(0xFF007AFF);
 
@@ -31,12 +39,12 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
   bool _isLoading = false;
   IosSocket? socket;
   late KeyboardVisibilityController _keyboardVisibilityController;
-
   List<Message>? messages = [];
 
   Future<void> _getSocket() async {
     final newSocket = IosSocket();
     await newSocket.initialize();
+    if (!mounted) return;
     setState(() {
       socket = newSocket;
     });
@@ -69,6 +77,17 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
     _fetchMessages();
     _getSocket();
 
+    final userProfile = profile;
+    if (userProfile != null) {
+      ZegoUIKitPrebuiltCallInvitationService().init(
+        appID: appId,
+        appSign: appSign,
+        userID: profile!.phoneNumber,
+        userName: profile!.phoneNumber,
+        plugins: [ZegoUIKitSignalingPlugin()],
+      );
+    }
+
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardVisibilityController.onChange.listen((bool isVisible) {
       if (isVisible) {
@@ -81,12 +100,23 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
     setState(() {
       _isLoading = true;
     });
-    List<Message>? temp = await getChatMessages(widget.friend.phone_number);
-    setState(() {
-      messages = temp;
-      _isLoading = false;
-    });
-    _scrollToBottom();
+    try {
+      List<Message>? temp = await getChatMessages(widget.friend.phone_number);
+      if (!mounted) return;
+      setState(() {
+        messages = temp;
+      });
+      _scrollToBottom();
+    } catch (e) {
+      // Handle error
+      print('Error fetching messages: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -95,6 +125,7 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
     _focusNode.dispose();
     _scrollController.dispose();
     socket?.dispose();
+    ZegoUIKitPrebuiltCallInvitationService().uninit();
     super.dispose();
   }
 
@@ -123,12 +154,17 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
   }
 
   void _sendMessage() {
-    if (_formKey.currentState!.validate() && _controller.text.trim().isNotEmpty) {
+    if (_formKey.currentState!.validate() &&
+        _controller.text.trim().isNotEmpty) {
       final text = _controller.text.trim();
       setState(() {
         messages = [
           ...?messages,
-          Message(message: text, timeStamp: DateTime.now().toString(), sent: true, messageType: "text")
+          Message(
+              message: text,
+              timeStamp: DateTime.now().toString(),
+              sent: true,
+              messageType: "text")
         ];
       });
       if (socket != null) {
@@ -192,21 +228,34 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              sendCall(widget.friend.phone_number, 'phonecall');
+            },
+            icon: const Icon(
+              Icons.call_outlined,
+              color: blueAppColor,
+              size: 35.0, // Adjusted size
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              sendCall(widget.friend.phone_number, 'videocall');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (builder) => IOSZegoVideoCallingScreen(
+                    callId: widget.friend.phone_number,
+                    userId: widget.friend.phone_number,
+                  ),
+                ),
+              );
+            },
             icon: const Icon(
               Icons.videocam_outlined,
               color: blueAppColor,
               size: 35.0, // Adjusted size
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.call_outlined,
-              color: blueAppColor,
-              size: 35.0, // Adjusted size
-            ),
-          )
         ],
       ),
       body: Stack(
@@ -245,7 +294,8 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5.0),
-                          child: messages![index].messageType.toLowerCase() == 'image'
+                          child: messages![index].messageType.toLowerCase() ==
+                                  'image'
                               ? IOSImageMessage(
                                   image: messages![index].message,
                                   sent: messages![index].sent,
@@ -294,7 +344,8 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 2.0),
                             child: TextField(
                               minLines: 1,
                               maxLines: 2,
@@ -304,13 +355,16 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                                 setState(() {});
                               },
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 15.0),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
                                 fillColor: Colors.white,
                                 filled: true,
                                 suffixIcon: IconButton(
                                   onPressed: _toggleEmojiPicker,
                                   icon: Icon(
-                                    _isEmojiVisible ? Icons.keyboard : Icons.emoji_emotions_outlined,
+                                    _isEmojiVisible
+                                        ? Icons.keyboard
+                                        : Icons.emoji_emotions_outlined,
                                     color: blueAppColor,
                                     size: 30.0,
                                   ),

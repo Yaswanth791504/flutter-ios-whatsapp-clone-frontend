@@ -3,7 +3,8 @@ import 'package:textz/settings.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class IOSZegoCallingScreen extends StatefulWidget {
-  const IOSZegoCallingScreen({super.key, required this.callId, required this.userId});
+  const IOSZegoCallingScreen(
+      {super.key, required this.callId, required this.userId});
   final String callId;
   final String userId;
 
@@ -13,11 +14,17 @@ class IOSZegoCallingScreen extends StatefulWidget {
 
 class _IOSZegoCallingScreenState extends State<IOSZegoCallingScreen> {
   @override
+  void initState() {
+    print("this is call screen");
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ZegoUIKitPrebuiltCall(
       appID: appId,
       appSign: appSign,
-      callID: widget.callId,
+      callID: '1',
       userID: widget.userId,
       userName: widget.userId,
       config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall(),

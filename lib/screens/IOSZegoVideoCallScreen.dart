@@ -3,12 +3,14 @@ import 'package:textz/settings.dart';
 import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 class IOSZegoVideoCallingScreen extends StatefulWidget {
-  const IOSZegoVideoCallingScreen({super.key, required this.callId, required this.userId});
+  const IOSZegoVideoCallingScreen(
+      {super.key, required this.callId, required this.userId});
   final String callId;
   final String userId;
 
   @override
-  State<IOSZegoVideoCallingScreen> createState() => _IOSZegoVideoCallingScreenState();
+  State<IOSZegoVideoCallingScreen> createState() =>
+      _IOSZegoVideoCallingScreenState();
 }
 
 class _IOSZegoVideoCallingScreenState extends State<IOSZegoVideoCallingScreen> {
@@ -17,7 +19,7 @@ class _IOSZegoVideoCallingScreenState extends State<IOSZegoVideoCallingScreen> {
     return ZegoUIKitPrebuiltCall(
       appID: appId,
       appSign: appSign,
-      callID: widget.callId,
+      callID: '12',
       userID: widget.userId,
       userName: widget.userId,
       config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),

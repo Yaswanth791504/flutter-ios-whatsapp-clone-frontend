@@ -6,6 +6,9 @@ class FirebaseNotifications {
   Future<String> initNotifications() async {
     await messaging.requestPermission();
     final messagingToken = await messaging.getToken();
-    return messagingToken ?? "";
+    print(
+        '+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-+-+----------------------------------+++++++++++++++++++++++');
+    print(messagingToken);
+    return messagingToken ?? "Not Got";
   }
 }
