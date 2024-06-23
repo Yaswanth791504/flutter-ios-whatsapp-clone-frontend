@@ -215,13 +215,26 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                   radius: 25.0,
                 ),
               ),
-              Text(
-                widget.friend.name.split(" ").length <= 2
-                    ? widget.friend.name
-                    : "${widget.friend.name.split(" ")[0]} ${widget.friend.name.split(" ")[1]}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
+              Column(
+                children: [
+                  Text(
+                    widget.friend.name.split(" ").length <= 2
+                        ? widget.friend.name
+                        : "${widget.friend.name.split(" ")[0]} ${widget.friend.name.split(" ")[1]}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  widget.friend.isOnline
+                      ? const Text(
+                          'Online',
+                          style: TextStyle(fontSize: 15),
+                        )
+                      : const Text(
+                          'Offline',
+                          style: TextStyle(fontSize: 15),
+                        )
+                ],
               ),
             ],
           ),

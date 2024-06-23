@@ -1,11 +1,8 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:camera/camera.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:textz/Api/firebase_notifications.dart';
-import 'package:textz/Helpers/IOSAwesomeNotificaiton.dart';
 import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/models/UserPreference.dart';
 import 'package:textz/screens/IOSHomeScreen.dart';
@@ -23,32 +20,23 @@ const Color blueAppColor = Color(0xFF1067FF);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
-
   try {
     cameras = await availableCameras();
   } catch (e) {
     debugPrint('Error fetching cameras: $e');
   }
-
   await Firebase.initializeApp();
-  final IOSAwesomeNotification notification = IOSAwesomeNotification();
-  userPreference.initializeLoggedIn();
-
   await FirebaseNotifications().initNotifications();
-  FirebaseMessaging.onBackgroundMessage(notification.backGroundMessageHandler);
-
+  await userPreference.initializeLoggedIn();
   await ZegoUIKit().initLog();
   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
     [ZegoUIKitSignalingPlugin()],
   );
-
-  runApp(MainApp(navigatorKey: navigatorKey, notification: notification));
+  runApp(MainApp(navigatorKey: navigatorKey));
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp(
-      {super.key, required this.navigatorKey, required this.notification});
-  final IOSAwesomeNotification notification;
+  const MainApp({super.key, required this.navigatorKey});
   final GlobalKey<NavigatorState> navigatorKey;
 
   @override
@@ -56,17 +44,6 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  Future<void> _initNotification() async {
-    try {
-      final bool allowed = await AwesomeNotifications().isNotificationAllowed();
-      if (!allowed) {
-        await AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    } catch (e) {
-      debugPrint('Error requesting notification permission: $e');
-    }
-  }
-
   Future<bool> _checkLoginStatus() async {
     return await userPreference.isLoggedIn();
   }
@@ -74,13 +51,6 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    _initNotification();
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-  }
-
-  Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    // Handle foreground messages with AwesomeNotifications
-    await widget.notification.backGroundMessageHandler(message);
   }
 
   @override

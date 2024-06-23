@@ -7,6 +7,7 @@ class IndividualChat {
       required this.last_message,
       required this.last_message_time,
       this.last_message_type = '',
+      required this.isOnline,
       this.email = ''});
 
   final String last_message_type;
@@ -17,4 +18,5 @@ class IndividualChat {
   final String profile_picture;
   final String last_message;
   final String last_message_time;
+  final bool isOnline;
 }

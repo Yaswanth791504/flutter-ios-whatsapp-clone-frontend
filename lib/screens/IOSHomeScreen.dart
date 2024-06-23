@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:textz/Api/user_requests.dart";
 import "package:textz/components/IOSBottomNavigationBar.dart";
 import "package:textz/screens/IOSCallScreen.dart";
 import "package:textz/screens/IOSCameraScreen.dart";
@@ -9,7 +10,6 @@ import "package:textz/screens/IOSStatusScreen.dart";
 import "package:textz/settings.dart";
 import "package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart";
 import "package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart";
-
 import 'IOSMainHomeScreen.dart';
 
 const Color blueAppColor = Color(0xFF1067FF);
@@ -21,9 +21,32 @@ class IOSHomeScreen extends StatefulWidget {
   State<IOSHomeScreen> createState() => _IOSHomeScreenState();
 }
 
-class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProviderStateMixin {
+class _IOSHomeScreenState extends State<IOSHomeScreen>
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _controller;
   int initialIndex = 3;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        setUserState(true);
+        setState(() {});
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        setUserState(false);
+        setState(() {});
+        break;
+      default:
+        setUserState(false);
+        setState(() {});
+    }
+  }
 
   void initZegoCloud() async {
     final userProfile = profile;
@@ -42,7 +65,8 @@ class _IOSHomeScreenState extends State<IOSHomeScreen> with SingleTickerProvider
   void initState() {
     initZegoCloud();
     super.initState();
-    _controller = TabController(length: 5, vsync: this, initialIndex: initialIndex);
+    _controller =
+        TabController(length: 5, vsync: this, initialIndex: initialIndex);
     _controller.addListener(_handleScreenChange);
   }
 

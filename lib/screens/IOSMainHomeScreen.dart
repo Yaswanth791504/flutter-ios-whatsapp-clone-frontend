@@ -74,10 +74,14 @@ class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
                           name: chats[index]['name'] ?? '',
                           phone_number: chats[index]['phone_number'] ?? '',
                           about: 'anything',
-                          profile_picture: chats[index]['profile_picture'] ?? '',
+                          profile_picture:
+                              chats[index]['profile_picture'] ?? '',
                           last_message: chats[index]["last_message"] ?? '',
-                          last_message_time: chats[index]["last_message_time"] ?? '',
-                          last_message_type: chats[index]["last_message_type"] ?? '',
+                          last_message_time:
+                              chats[index]["last_message_time"] ?? '',
+                          last_message_type:
+                              chats[index]["last_message_type"] ?? '',
+                          isOnline: chats[index]['status'] ?? false,
                         ),
                       );
                     },

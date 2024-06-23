@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:textz/Api/firebase_notifications.dart';
@@ -65,6 +66,7 @@ Future<IndividualChat?> getUserContactsFromPhone(String phoneNumber) async {
         last_message: '',
         last_message_time: '',
         last_message_type: '',
+        isOnline: data['status'],
       );
     } else {
       print(
@@ -242,5 +244,24 @@ Future<String> sendImageToUser(String path, String friendNumber) async {
     print(data);
   } catch (e) {
     return '';
+  }
+}
+
+Future<void> setUserState(bool isOnline) async {
+  try {
+    final String number = await phoneNumber.getNumber();
+    final request = await http.post(
+        Uri.parse('$backEndUri/user/status?phone_number=$number'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(
+          {
+            "status": isOnline,
+          },
+        ));
+    if (request.statusCode == 200) {
+      print("user Status upadted");
+    }
+  } catch (e) {
+    print(e);
   }
 }
