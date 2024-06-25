@@ -8,7 +8,10 @@ import 'package:textz/screens/IOSGalleryScreen.dart';
 
 class IOSMediaComponent extends StatelessWidget {
   const IOSMediaComponent(
-      {super.key, required this.friendPhoneNumber, required this.socketInstance, required this.updateChats});
+      {super.key,
+      required this.friendPhoneNumber,
+      required this.socketInstance,
+      required this.updateChats});
   final updateChats;
   final String friendPhoneNumber;
   final IosSocket? socketInstance;
@@ -31,12 +34,16 @@ class IOSMediaComponent extends StatelessWidget {
                 return Container(
                   decoration: const BoxDecoration(
                     color: Color(0xFFf0eef2),
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(16)),
                   ),
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(16)),
                     child: IOSGalleryScreen(
-                        phoneNumber: friendPhoneNumber, socketInstance: socketInstance, updateChats: updateChats),
+                        phoneNumber: friendPhoneNumber,
+                        socketInstance: socketInstance,
+                        updateChats: updateChats),
                   ),
                 );
               },
@@ -47,7 +54,8 @@ class IOSMediaComponent extends StatelessWidget {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Media permission is required to access the gallery.'),
+          content:
+              const Text('Media permission is required to access the gallery.'),
           action: SnackBarAction(
             label: 'Retry',
             onPressed: () {
@@ -71,7 +79,8 @@ class IOSMediaComponent extends StatelessWidget {
               Card(
                 child: ListView(
                   addRepaintBoundaries: false,
-                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                   shrinkWrap: true,
                   children: [
                     IOSListTile(
@@ -79,20 +88,29 @@ class IOSMediaComponent extends StatelessWidget {
                         title: "Camera",
                         onPressed: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => IOSCamera(
-                                        onPressed: () {},
-                                      )));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => IOSCamera(
+                                onPressed: () {},
+                                sendingImage: true,
+                                phoneNumber: friendPhoneNumber,
+                                socketInstance: socketInstance,
+                                updateChats: updateChats,
+                              ),
+                            ),
+                          );
                         }),
                     IOSListTile(
                       icon: Icons.image_outlined,
                       title: "Photos & Video Library",
                       onPressed: () => _requestMediaPermission(context),
                     ),
-                    const IOSListTile(icon: Icons.note_add_outlined, title: "Document"),
-                    const IOSListTile(icon: Icons.location_on_outlined, title: "Location"),
-                    const IOSListTile(icon: Icons.contact_page_outlined, title: "Contact"),
+                    const IOSListTile(
+                        icon: Icons.note_add_outlined, title: "Document"),
+                    const IOSListTile(
+                        icon: Icons.location_on_outlined, title: "Location"),
+                    const IOSListTile(
+                        icon: Icons.contact_page_outlined, title: "Contact"),
                   ],
                 ),
               ),

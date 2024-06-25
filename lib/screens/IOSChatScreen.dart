@@ -12,13 +12,9 @@ import 'package:textz/components/IOSMessage.dart';
 import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/models/Message.dart';
 import 'package:textz/screens/IOSUserProfile.dart';
-import 'package:textz/screens/IOSZegoCallScreen.dart';
 import 'package:textz/screens/IOSZegoVideoCallScreen.dart';
-import 'package:textz/settings.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
-import 'IOSEditScreen.dart';
+import 'IOSZegoCallScreen.dart';
 
 const Color blueAppColor = Color(0xFF007AFF);
 
@@ -77,17 +73,6 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
     _fetchMessages();
     _getSocket();
 
-    final userProfile = profile;
-    if (userProfile != null) {
-      ZegoUIKitPrebuiltCallInvitationService().init(
-        appID: appId,
-        appSign: appSign,
-        userID: profile!.phoneNumber,
-        userName: profile!.phoneNumber,
-        plugins: [ZegoUIKitSignalingPlugin()],
-      );
-    }
-
     _keyboardVisibilityController = KeyboardVisibilityController();
     _keyboardVisibilityController.onChange.listen((bool isVisible) {
       if (isVisible) {
@@ -125,7 +110,6 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
     _focusNode.dispose();
     _scrollController.dispose();
     socket?.dispose();
-    ZegoUIKitPrebuiltCallInvitationService().uninit();
     super.dispose();
   }
 
@@ -215,34 +199,49 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
                   radius: 25.0,
                 ),
               ),
-              Column(
-                children: [
-                  Text(
-                    widget.friend.name.split(" ").length <= 2
-                        ? widget.friend.name
-                        : "${widget.friend.name.split(" ")[0]} ${widget.friend.name.split(" ")[1]}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start, // Align text to start
+                  children: [
+                    Text(
+                      widget.friend.name.split(" ").length <= 2
+                          ? widget.friend.name
+                          : "${widget.friend.name.split(" ")[0]} ${widget.friend.name.split(" ")[1]}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        overflow: TextOverflow.ellipsis, // Handle overflow
+                      ),
                     ),
-                  ),
-                  widget.friend.isOnline
-                      ? const Text(
-                          'Online',
-                          style: TextStyle(fontSize: 15),
-                        )
-                      : const Text(
-                          'Offline',
-                          style: TextStyle(fontSize: 15),
-                        )
-                ],
+                    widget.friend.isOnline
+                        ? const Text(
+                            'Online',
+                            style: TextStyle(fontSize: 12),
+                          )
+                        : const Text(
+                            'Offline',
+                            style: TextStyle(fontSize: 12),
+                          )
+                  ],
+                ),
               ),
             ],
           ),
         ),
         actions: <Widget>[
           IconButton(
-            onPressed: () {
-              sendCall(widget.friend.phone_number, 'phonecall');
+            onPressed: () async {
+              final String callId =
+                  await sendCall(widget.friend.phone_number, 'phonecall');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (builder) => IOSZegoCallingScreen(
+                    callId: callId,
+                    userId: callId,
+                  ),
+                ),
+              );
             },
             icon: const Icon(
               Icons.call_outlined,
@@ -251,14 +250,15 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
             ),
           ),
           IconButton(
-            onPressed: () {
-              sendCall(widget.friend.phone_number, 'videocall');
+            onPressed: () async {
+              final String callId =
+                  await sendCall(widget.friend.phone_number, 'videocall');
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (builder) => IOSZegoVideoCallingScreen(
-                    callId: widget.friend.phone_number,
-                    userId: widget.friend.phone_number,
+                    callId: callId,
+                    userId: callId,
                   ),
                 ),
               );

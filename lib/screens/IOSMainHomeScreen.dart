@@ -19,6 +19,7 @@ class IOSMainHomeScreen extends StatefulWidget {
 
 class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
   List<dynamic> chats = [];
+  List<dynamic> searchedChats = [];
   final TextEditingController _searchController = TextEditingController();
   Timer? _refreshTimer;
 
@@ -44,9 +45,18 @@ class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
 
   Future<void> _fetchChats() async {
     final userFriendChats = await getChats();
-    // print(userFriendChats);
     setState(() {
       chats = userFriendChats ?? [];
+      searchedChats = chats;
+    });
+  }
+
+  void getFilterList(String value) {
+    setState(() {
+      searchedChats = chats
+          .where((element) =>
+              element['name'].toLowerCase().contains(value.toLowerCase()))
+          .toList();
     });
   }
 
@@ -58,30 +68,36 @@ class _IOSMainHomeScreenState extends State<IOSMainHomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const IOSHeader(screenName: "Chats"),
-          IOSSearchBar(
-            controller: _searchController,
-            onChanged: (String value) {},
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: IOSSearchBar(
+              controller: _searchController,
+              onChanged: (String value) {
+                getFilterList(value);
+              },
+            ),
           ),
           const IOSOptions(),
-          Flexible(
-            flex: 13,
-            child: chats.isNotEmpty
+          Expanded(
+            child: searchedChats.isNotEmpty
                 ? ListView.builder(
-                    itemCount: chats.length,
+                    itemCount: searchedChats.length,
                     itemBuilder: (BuildContext context, int index) {
                       return IOSIndividualChat(
                         friend: IndividualChat(
-                          name: chats[index]['name'] ?? '',
-                          phone_number: chats[index]['phone_number'] ?? '',
+                          name: searchedChats[index]['name'] ?? '',
+                          phone_number:
+                              searchedChats[index]['phone_number'] ?? '',
                           about: 'anything',
                           profile_picture:
-                              chats[index]['profile_picture'] ?? '',
-                          last_message: chats[index]["last_message"] ?? '',
+                              searchedChats[index]['profile_picture'] ?? '',
+                          last_message:
+                              searchedChats[index]["last_message"] ?? '',
                           last_message_time:
-                              chats[index]["last_message_time"] ?? '',
+                              searchedChats[index]["last_message_time"] ?? '',
                           last_message_type:
-                              chats[index]["last_message_type"] ?? '',
-                          isOnline: chats[index]['status'] ?? false,
+                              searchedChats[index]["last_message_type"] ?? '',
+                          isOnline: searchedChats[index]['status'] ?? false,
                         ),
                       );
                     },

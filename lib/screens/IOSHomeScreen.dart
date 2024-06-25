@@ -10,6 +10,7 @@ import "package:textz/screens/IOSStatusScreen.dart";
 import "package:textz/settings.dart";
 import "package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart";
 import "package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart";
+
 import 'IOSMainHomeScreen.dart';
 
 const Color blueAppColor = Color(0xFF1067FF);
@@ -28,7 +29,6 @@ class _IOSHomeScreenState extends State<IOSHomeScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
     switch (state) {
       case AppLifecycleState.resumed:
@@ -63,8 +63,8 @@ class _IOSHomeScreenState extends State<IOSHomeScreen>
 
   @override
   void initState() {
-    initZegoCloud();
     super.initState();
+    initZegoCloud();
     _controller =
         TabController(length: 5, vsync: this, initialIndex: initialIndex);
     _controller.addListener(_handleScreenChange);

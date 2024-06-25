@@ -15,11 +15,24 @@ class IOSZegoVideoCallingScreen extends StatefulWidget {
 
 class _IOSZegoVideoCallingScreenState extends State<IOSZegoVideoCallingScreen> {
   @override
+  void initState() {
+    super.initState();
+    print("Initializing call screen");
+    ZegoUIKit.instance.joinRoom(widget.callId);
+  }
+
+  @override
+  void dispose() {
+    ZegoUIKit.instance.leaveRoom();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ZegoUIKitPrebuiltCall(
       appID: appId,
       appSign: appSign,
-      callID: '12',
+      callID: widget.callId,
       userID: widget.userId,
       userName: widget.userId,
       config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),

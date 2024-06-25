@@ -13,7 +13,8 @@ import 'package:textz/screens/IOSHomeScreen.dart';
 import 'IOSEditScreen.dart';
 
 class IOSIntroEditScreen extends StatefulWidget {
-  const IOSIntroEditScreen({super.key, required this.pageController, required this.phoneController});
+  const IOSIntroEditScreen(
+      {super.key, required this.pageController, required this.phoneController});
   final GlobalKey<IntroductionScreenState> pageController;
   final TextEditingController phoneController;
 
@@ -26,10 +27,12 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
 
-  String imageUri = 'http://res.cloudinary.com/drv13gs45/image/upload/v1717225161/ios-whatsapp/default.jpg';
+  String imageUri =
+      'http://res.cloudinary.com/drv13gs45/image/upload/v1717225161/ios-whatsapp/default.jpg';
 
   void _pickImageFromGallery() async {
-    final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final returnedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnedImage == null) return;
     setState(() {
       _isLoading = true;
@@ -90,12 +93,15 @@ class _IOSIntroEditScreenState extends State<IOSIntroEditScreen> {
                         name: _controller.value.text.toString(),
                         email: '',
                         image: imageUri,
-                        phoneNumber: widget.phoneController.value.text.toString(),
+                        phoneNumber:
+                            widget.phoneController.value.text.toString(),
                       );
-
                       createUser(profile!);
                       userPreference.setLoggedIn();
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const IOSHomeScreen()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const IOSHomeScreen()));
                     }
                   },
                   text: 'Next')

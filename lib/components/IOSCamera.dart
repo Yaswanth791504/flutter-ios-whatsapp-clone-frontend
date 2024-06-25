@@ -1,13 +1,27 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:textz/main.dart';
+import 'package:textz/screens/IOSGalleryImageViewer.dart';
 import 'package:textz/screens/IOSImageSender.dart';
 
 class IOSCamera extends StatefulWidget {
-  const IOSCamera({super.key, required this.onPressed});
+  const IOSCamera({
+    super.key,
+    required this.onPressed,
+    this.sendingImage = false,
+    this.socketInstance = null,
+    this.updateChats = null,
+    this.phoneNumber = '',
+  });
+  final socketInstance;
+  final updateChats;
+  final phoneNumber;
   final onPressed;
+  final bool sendingImage;
 
   @override
   State<IOSCamera> createState() => _IOSCameraState();
@@ -78,9 +92,11 @@ class _IOSCameraState extends State<IOSCamera> {
                 children: <Widget>[
                   IconButton(
                     onPressed: () async {
-                      final permission = await PhotoManager.requestPermissionExtend();
+                      final permission =
+                          await PhotoManager.requestPermissionExtend();
                       if (permission.isAuth) {
-                        final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        final file = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
                         if (file != null) {
                           Navigator.push(
                             context,
@@ -95,8 +111,9 @@ class _IOSCameraState extends State<IOSCamera> {
                           print('Something happened');
                         }
                       } else {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(content: Text('Permission is denied')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Permission is denied')));
                       }
                     },
                     icon: const Icon(
@@ -110,13 +127,24 @@ class _IOSCameraState extends State<IOSCamera> {
                       try {
                         await _cameraController.setFlashMode(FlashMode.always);
                         XFile picture = await _cameraController.takePicture();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => IOSImageSender(
-                                      image: picture,
-                                      onPressed: () {},
-                                    )));
+                        widget.sendingImage
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (builder) => IOSGalleryImageViewer(
+                                          file:
+                                              Future.value(File(picture.path)),
+                                          phoneNumber: widget.phoneNumber,
+                                          socketInstance: widget.socketInstance,
+                                          updateChats: widget.updateChats,
+                                        )))
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => IOSImageSender(
+                                          image: picture,
+                                          onPressed: () {},
+                                        )));
                         await _cameraController.setFlashMode(FlashMode.off);
                       } catch (e) {
                         print('Error happend ${e.toString()}');
@@ -132,12 +160,16 @@ class _IOSCameraState extends State<IOSCamera> {
                     onPressed: () {
                       setState(() {
                         _isRearCamera = !_isRearCamera;
-                        _cameraController = CameraController(cameras[_isRearCamera ? 1 : 0], ResolutionPreset.high);
+                        _cameraController = CameraController(
+                            cameras[_isRearCamera ? 1 : 0],
+                            ResolutionPreset.high);
                         cameraValue = _cameraController.initialize();
                       });
                     },
                     icon: Icon(
-                      _isRearCamera ? Icons.flip_camera_ios_outlined : Icons.flip_camera_ios,
+                      _isRearCamera
+                          ? Icons.flip_camera_ios_outlined
+                          : Icons.flip_camera_ios,
                       color: Colors.white,
                       shadows: const [
                         Shadow(

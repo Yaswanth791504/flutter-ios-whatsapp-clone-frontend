@@ -1,14 +1,14 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:camera/camera.dart';
 import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:textz/Api/firebase_notifications.dart';
 import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/models/UserPreference.dart';
 import 'package:textz/screens/IOSHomeScreen.dart';
 import 'package:textz/screens/IOSIntroScreen.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 List<CameraDescription> cameras = [];
 UserPreference userPreference = UserPreference();
@@ -19,19 +19,17 @@ const Color blueAppColor = Color(0xFF1067FF);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
   try {
     cameras = await availableCameras();
   } catch (e) {
     debugPrint('Error fetching cameras: $e');
   }
   await Firebase.initializeApp();
-  await FirebaseNotifications().initNotifications();
+  await FlutterContacts.requestPermission();
   await userPreference.initializeLoggedIn();
-  await ZegoUIKit().initLog();
-  ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-    [ZegoUIKitSignalingPlugin()],
-  );
+  await FirebaseNotifications().initNotifications();
+  AwesomeNotifications().setListeners(
+      onActionReceivedMethod: FirebaseNotifications.onActionReceivedMethod);
   runApp(MainApp(navigatorKey: navigatorKey));
 }
 

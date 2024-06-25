@@ -1,11 +1,15 @@
-import 'dart:ui';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+import '../screens/IOSZegoCallScreen.dart';
+import '../screens/IOSZegoVideoCallScreen.dart';
+
 class FirebaseNotifications {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  FirebaseNotifications();
 
   Future<String> initNotifications() async {
     await _requestPermissions();
@@ -14,7 +18,7 @@ class FirebaseNotifications {
     messaging.onTokenRefresh.listen((newToken) {
       print('New FCM Token: $newToken');
     });
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _handleForegroundNotification(message);
     });
@@ -38,12 +42,22 @@ class FirebaseNotifications {
       null,
       [
         NotificationChannel(
-          channelKey: 'basic_channel',
-          channelName: 'Basic Notifications',
-          channelDescription: 'Notification channel for basic tests',
+          channelKey: 'message_channel',
+          channelName: 'Messages',
+          channelDescription: 'Notification channel for messages',
           defaultColor: const Color(0xFF9D50DD),
           ledColor: Colors.white,
-          importance: NotificationImportance.High,
+          importance: NotificationImportance.Max,
+          defaultRingtoneType: DefaultRingtoneType.Notification,
+        ),
+        NotificationChannel(
+          channelKey: 'call_channel',
+          channelName: 'Calls',
+          channelDescription: 'Notification channel for calls',
+          defaultColor: const Color(0xFF9D50DD),
+          ledColor: Colors.white,
+          importance: NotificationImportance.Max,
+          defaultRingtoneType: DefaultRingtoneType.Ringtone,
         ),
       ],
       debug: true,
@@ -59,7 +73,7 @@ class FirebaseNotifications {
     }
   }
 
-  Future<void> _firebaseMessagingBackgroundHandler(
+  static Future<void> firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     print('Handling a background message: ${message.messageId}');
     _showNotification(message);
@@ -70,33 +84,73 @@ class FirebaseNotifications {
     _showNotification(message);
   }
 
-  void _showNotification(RemoteMessage message) {
+  static void _showNotification(RemoteMessage message) {
+    String channelKey =
+        message.data['type'] == 'message' ? 'message_channel' : 'call_channel';
+    NotificationCategory category = message.data['type'] == 'message'
+        ? NotificationCategory.Message
+        : NotificationCategory.Call;
+
     AwesomeNotifications().createNotification(
       content: NotificationContent(
-        id: 1,
-        channelKey: 'basic_channel',
-        title: 'this is nothing',
+        id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+        channelKey: channelKey,
+        title: message.notification?.title,
         body: message.data['call_id'],
-        category: NotificationCategory.Call,
+        category: category,
         wakeUpScreen: true,
         fullScreenIntent: true,
         autoDismissible: false,
         backgroundColor: Colors.white,
+        payload: message.data.map<String, String?>(
+          (key, value) => MapEntry(key, value.toString()),
+        ),
       ),
-      actionButtons: [
-        NotificationActionButton(
-          key: 'ACCEPT',
-          label: 'Accept',
-          color: Colors.green,
-          autoDismissible: true,
-        ),
-        NotificationActionButton(
-          key: 'REJECT',
-          label: 'Reject',
-          color: Colors.red,
-          autoDismissible: true,
-        ),
-      ],
+      actionButtons: message.data['type'] == 'phonecall' ||
+              message.data['type'] == "videocall"
+          ? [
+              NotificationActionButton(
+                key: 'ACCEPT',
+                label: 'Accept',
+                color: Colors.green,
+                autoDismissible: true,
+              ),
+              NotificationActionButton(
+                key: 'REJECT',
+                label: 'Reject',
+                color: Colors.red,
+                autoDismissible: true,
+              ),
+            ]
+          : null,
     );
+  }
+
+  static Future<void> onActionReceivedMethod(ReceivedAction action) async {
+    final payload = action.payload;
+    if (payload == null) return;
+
+    print('Button pressed: ${action.buttonKeyPressed}');
+    if (action.buttonKeyPressed == 'ACCEPT') {
+      if (payload['type'] == 'phonecall') {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => IOSZegoCallingScreen(
+              callId: payload['call_id'] ?? '',
+              userId: payload['call_id'] ?? '',
+            ),
+          ),
+        );
+      } else {
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => IOSZegoVideoCallingScreen(
+              callId: payload['call_id'] ?? '',
+              userId: payload['call_id'] ?? '',
+            ),
+          ),
+        );
+      }
+    }
   }
 }

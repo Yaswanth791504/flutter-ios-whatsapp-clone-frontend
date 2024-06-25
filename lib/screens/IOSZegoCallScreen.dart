@@ -15,8 +15,9 @@ class IOSZegoCallingScreen extends StatefulWidget {
 class _IOSZegoCallingScreenState extends State<IOSZegoCallingScreen> {
   @override
   void initState() {
-    print("this is call screen");
     super.initState();
+    print("Initializing call screen");
+    ZegoUIKit.instance.joinRoom(widget.callId);
   }
 
   @override
@@ -24,10 +25,17 @@ class _IOSZegoCallingScreenState extends State<IOSZegoCallingScreen> {
     return ZegoUIKitPrebuiltCall(
       appID: appId,
       appSign: appSign,
-      callID: '1',
+      callID: widget.callId,
       userID: widget.userId,
       userName: widget.userId,
       config: ZegoUIKitPrebuiltCallConfig.oneOnOneVoiceCall(),
     );
+  }
+
+  @override
+  void dispose() {
+    // Leave the room when the screen is disposed
+    ZegoUIKit.instance.leaveRoom();
+    super.dispose();
   }
 }

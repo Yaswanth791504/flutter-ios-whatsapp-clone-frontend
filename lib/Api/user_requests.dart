@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:textz/Api/firebase_notifications.dart';
@@ -11,12 +10,13 @@ import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/models/Message.dart';
 import 'package:textz/models/Profile.dart';
 
-// const String backEndUri = 'https://fastapi-ios-whatsapp-clone-backend.onrender.com';
-const String backEndUri = 'http://10.0.2.2:8000';
+const String backEndUri = 'https://ios-whatsapp-backend.onrender.com';
+// const String backEndUri = 'http://10.0.2.2:8000';
 
 void createUser(Profile profile) async {
   try {
-    final token = await FirebaseNotifications().initNotifications();
+    final notification = FirebaseNotifications();
+    final token = await notification.initNotifications();
     await http.post(Uri.parse('$backEndUri/user/register'),
         body: jsonEncode({
           'name': profile.getName(),
@@ -46,31 +46,43 @@ Future<IndividualChat?> getUserContactsFromPhone(String phoneNumber) async {
     if (response.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(response.body);
       if (data.containsKey('details')) {
+        print('No user details found for phone number: $phoneNumber');
         return null;
       }
+
       List<Contact> contacts =
           await FlutterContacts.getContacts(withProperties: true);
+      String refinedPhoneNumber = IOSHelpers.getRefinedPhoneNumber(phoneNumber);
       var contact = contacts.firstWhere(
-        (element) =>
-            IOSHelpers.getRefinedPhoneNumber(element.phones[0].number) ==
-            data['phone_number'],
+        (contact) {
+          return contact.phones.any((phone) {
+            String refinedContactPhone =
+                IOSHelpers.getRefinedPhoneNumber(phone.number);
+            return refinedContactPhone == refinedPhoneNumber;
+          });
+        },
+        orElse: () => Contact(),
       );
+      if (contact.phones.isEmpty) {
+        print('No matching contact found for phone number: $phoneNumber');
+        return null;
+      }
       data['name'] = contact.displayName;
-      print(phoneNumber + data.toString());
+      print('Fetched contact: ${data.toString()}');
       return IndividualChat(
-        name: data['name'],
-        email: data['email'],
-        phone_number: data['phone_number'],
-        about: data['about'],
-        profile_picture: data['profile_picture'],
+        name: data['name'] ?? '',
+        email: data['email'] ?? '',
+        phone_number: data['phone_number'] ?? '',
+        about: data['about'] ?? '',
+        profile_picture: data['profile_picture'] ?? '',
         last_message: '',
         last_message_time: '',
         last_message_type: '',
-        isOnline: data['status'],
+        isOnline: data['status'] ?? false,
       );
     } else {
       print(
-          '$phoneNumber Failed to fetch user details: ${response.statusCode}');
+          'Failed to fetch user details: ${response.statusCode} - ${response.body}');
       return null;
     }
   } catch (e) {
@@ -139,34 +151,52 @@ Future<Map<String, dynamic>?> updateUserDetails(
 
 Future<List<dynamic>?> getChats() async {
   try {
-    final number = await phoneNumber.getNumber();
-    final response = await http
-        .get(Uri.parse('$backEndUri/user/chats?phone_number=$number'));
-    List<dynamic> result = await jsonDecode(response.body);
-
+    final String? number = await phoneNumber.getNumber();
+    if (number == null || number.isEmpty) {
+      print('Phone number is null or empty');
+      return null;
+    }
+    final Uri url = Uri.parse('$backEndUri/user/chats?phone_number=$number');
+    final http.Response response = await http.get(url);
+    if (response.statusCode != 200) {
+      print('Failed to fetch chats: ${response.statusCode} - ${response.body}');
+      return null;
+    }
+    List<dynamic> chats = jsonDecode(response.body);
+    if (chats.isEmpty) {
+      print('No chats found for phone number: $number');
+      return [];
+    }
     List<Contact> contacts =
         await FlutterContacts.getContacts(withProperties: true);
-    result = result.where((chat) {
+    List<dynamic> result = chats.where((chat) {
       String? chatPhoneNumber = chat['phone_number'];
-      return contacts.any((contact) =>
-          IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) ==
-          chatPhoneNumber);
+      if (chatPhoneNumber == null) return false;
+      return contacts.any((contact) {
+        return contact.phones.any((phone) {
+          return IOSHelpers.getRefinedPhoneNumber(phone.number) ==
+              chatPhoneNumber;
+        });
+      });
     }).map((chat) {
       String? chatPhoneNumber = chat['phone_number'];
-      String? displayName = contacts
-          .firstWhere(
-            (contact) =>
-                IOSHelpers.getRefinedPhoneNumber(contact.phones[0].number) ==
-                chatPhoneNumber,
-          )
-          .displayName;
-
+      String? displayName;
+      try {
+        displayName = contacts.firstWhere((contact) {
+          return contact.phones.any((phone) {
+            return IOSHelpers.getRefinedPhoneNumber(phone.number) ==
+                chatPhoneNumber;
+          });
+        }).displayName;
+      } catch (e) {
+        displayName = null;
+      }
       return {...chat, 'name': displayName};
     }).toList();
-    print(result);
+    print('Fetched chats: $result');
     return result;
   } catch (e) {
-    // print('Error - $e');
+    print('Error: $e');
     return null;
   }
 }
