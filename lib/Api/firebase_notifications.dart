@@ -1,16 +1,17 @@
+import 'dart:math';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:textz/screens/IOSZegoCallScreen.dart';
+import 'package:textz/screens/IOSZegoVideoCallScreen.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 import '../main.dart';
-import '../screens/IOSZegoCallScreen.dart';
-import '../screens/IOSZegoVideoCallScreen.dart';
 
 class FirebaseNotifications {
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
-
   FirebaseNotifications();
-
   Future<String> initNotifications() async {
     await _requestPermissions();
     await _initializeAwesomeNotifications();
@@ -129,28 +130,37 @@ class FirebaseNotifications {
   static Future<void> onActionReceivedMethod(ReceivedAction action) async {
     final payload = action.payload;
     if (payload == null) return;
-
     print('Button pressed: ${action.buttonKeyPressed}');
     if (action.buttonKeyPressed == 'ACCEPT') {
       if (payload['type'] == 'phonecall') {
-        navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (context) => IOSZegoCallingScreen(
+        try {
+          await ZegoUIKit.instance.joinRoom(payload['call_id'] ?? '');
+          print('Joined call with ID: ${payload['call_id']}');
+          navigatorKey.currentState?.push(MaterialPageRoute(
+            builder: (context) => IOSZegoCallScreen(
               callId: payload['call_id'] ?? '',
-              userId: payload['call_id'] ?? '',
+              userId: Random().nextInt(1000).toString(),
             ),
-          ),
-        );
+          ));
+        } catch (e) {
+          print('Error joining room: $e');
+        }
       } else {
-        navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (context) => IOSZegoVideoCallingScreen(
+        try {
+          await ZegoUIKit.instance.joinRoom(payload['call_id'] ?? '');
+          print('Joined call with ID: ${payload['call_id']}');
+          navigatorKey.currentState?.push(MaterialPageRoute(
+            builder: (context) => IOSZegoVideoCallScreen(
               callId: payload['call_id'] ?? '',
-              userId: payload['call_id'] ?? '',
+              userId: Random().nextInt(1000).toString(),
             ),
-          ),
-        );
+          ));
+        } catch (e) {
+          print('Error joining room: $e');
+        }
       }
+    } else {
+      print('Call rejected with ID: ${payload['call_id']}');
     }
   }
 }

@@ -9,12 +9,12 @@ import 'package:textz/components/IOSCircularProgressIndicator.dart';
 import 'package:textz/components/IOSImageMessage.dart';
 import 'package:textz/components/IOSMediaComponent.dart';
 import 'package:textz/components/IOSMessage.dart';
+import 'package:textz/main.dart';
 import 'package:textz/models/IndividualChat.dart';
 import 'package:textz/models/Message.dart';
 import 'package:textz/screens/IOSUserProfile.dart';
+import 'package:textz/screens/IOSZegoCallScreen.dart';
 import 'package:textz/screens/IOSZegoVideoCallScreen.dart';
-
-import 'IOSZegoCallScreen.dart';
 
 const Color blueAppColor = Color(0xFF007AFF);
 
@@ -233,12 +233,11 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
             onPressed: () async {
               final String callId =
                   await sendCall(widget.friend.phone_number, 'phonecall');
-              Navigator.push(
-                context,
+              navigatorKey.currentState?.push(
                 MaterialPageRoute(
-                  builder: (builder) => IOSZegoCallingScreen(
+                  builder: (builder) => IOSZegoCallScreen(
                     callId: callId,
-                    userId: callId,
+                    userId: widget.friend.phone_number,
                   ),
                 ),
               );
@@ -253,13 +252,10 @@ class _IOSChatScreenState extends State<IOSChatScreen> {
             onPressed: () async {
               final String callId =
                   await sendCall(widget.friend.phone_number, 'videocall');
-              Navigator.push(
-                context,
+              navigatorKey.currentState?.push(
                 MaterialPageRoute(
-                  builder: (builder) => IOSZegoVideoCallingScreen(
-                    callId: callId,
-                    userId: callId,
-                  ),
+                  builder: (builder) => IOSZegoVideoCallScreen(
+                      callId: callId, userId: widget.friend.phone_number),
                 ),
               );
             },

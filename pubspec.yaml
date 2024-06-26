@@ -32,9 +32,9 @@ dependencies:
   socket_io_client: ^2.0.3+1
   agora_rtc_engine: ^6.3.2
   story_view: ^0.16.5
-  zego_uikit_signaling_plugin: ^2.7.13
-  zego_uikit_prebuilt_call: ^4.12.3
   awesome_notifications: ^0.9.3+1
+  zego_uikit_signaling_plugin: ^2.7.14
+  zego_uikit_prebuilt_call: ^4.12.9
 
 dev_dependencies:
   flutter_test:

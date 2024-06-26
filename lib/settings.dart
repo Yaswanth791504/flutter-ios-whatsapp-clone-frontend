@@ -1,2 +1,3 @@
-const appId = 1526988560;
-const appSign = 'e06d8bbbf8d4b5425fd34e9e8af317872ae815efa3c95d6c31d589b551a168c5';
+const appId = 781027800;
+const appSign =
+    'e58380008828f71c3547b0b422b8572c364300116b5d3fb1e9a4a6e6e5835f25';

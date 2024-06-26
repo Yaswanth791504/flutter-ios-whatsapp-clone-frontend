@@ -9,7 +9,6 @@ import "package:textz/screens/IOSSettingsScreen.dart";
 import "package:textz/screens/IOSStatusScreen.dart";
 import "package:textz/settings.dart";
 import "package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart";
-import "package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart";
 
 import 'IOSMainHomeScreen.dart';
 
@@ -48,16 +47,10 @@ class _IOSHomeScreenState extends State<IOSHomeScreen>
     }
   }
 
-  void initZegoCloud() async {
+  Future<void> initZegoCloud() async {
     final userProfile = profile;
     if (userProfile != null) {
-      ZegoUIKitPrebuiltCallInvitationService().init(
-        appID: appId,
-        appSign: appSign,
-        userID: userProfile.getPhoneNumber(),
-        userName: userProfile.getPhoneNumber(),
-        plugins: [ZegoUIKitSignalingPlugin()],
-      );
+      await ZegoUIKit.instance.init(appID: appId, appSign: appSign);
     }
   }
 
@@ -78,7 +71,6 @@ class _IOSHomeScreenState extends State<IOSHomeScreen>
 
   @override
   void dispose() {
-    ZegoUIKitPrebuiltCallInvitationService().uninit();
     super.dispose();
   }
 

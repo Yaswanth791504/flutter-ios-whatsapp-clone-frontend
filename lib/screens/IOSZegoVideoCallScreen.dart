@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:textz/settings.dart';
-import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart'; // Adjust path as needed
 
-class IOSZegoVideoCallingScreen extends StatefulWidget {
-  const IOSZegoVideoCallingScreen(
-      {super.key, required this.callId, required this.userId});
+class IOSZegoVideoCallScreen extends StatefulWidget {
   final String callId;
   final String userId;
+  const IOSZegoVideoCallScreen(
+      {super.key, required this.callId, required this.userId});
 
   @override
-  State<IOSZegoVideoCallingScreen> createState() =>
-      _IOSZegoVideoCallingScreenState();
+  _IOSZegoVideoCallScreenState createState() => _IOSZegoVideoCallScreenState();
 }
 
-class _IOSZegoVideoCallingScreenState extends State<IOSZegoVideoCallingScreen> {
+class _IOSZegoVideoCallScreenState extends State<IOSZegoVideoCallScreen> {
   @override
   void initState() {
     super.initState();
-    print("Initializing call screen");
-    ZegoUIKit.instance.joinRoom(widget.callId);
+    _joinCall();
+  }
+
+  Future<void> _joinCall() async {
+    await ZegoUIKit.instance.joinRoom(widget.callId);
   }
 
   @override
@@ -29,13 +31,15 @@ class _IOSZegoVideoCallingScreenState extends State<IOSZegoVideoCallingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ZegoUIKitPrebuiltCall(
-      appID: appId,
-      appSign: appSign,
-      callID: widget.callId,
-      userID: widget.userId,
-      userName: widget.userId,
-      config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),
+    return Scaffold(
+      body: ZegoUIKitPrebuiltCall(
+        appID: appId, // Your Zego appId
+        appSign: appSign, // Your Zego appSign
+        callID: widget.callId,
+        userID: widget.userId, // Replace with your user ID
+        userName: widget.userId, // Replace with your user name
+        config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),
+      ),
     );
   }
 }

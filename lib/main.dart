@@ -27,7 +27,6 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await FlutterContacts.requestPermission();
   await userPreference.initializeLoggedIn();
-  await FirebaseNotifications().initNotifications();
   AwesomeNotifications().setListeners(
       onActionReceivedMethod: FirebaseNotifications.onActionReceivedMethod);
   runApp(MainApp(navigatorKey: navigatorKey));
@@ -49,6 +48,7 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    FirebaseNotifications().initNotifications();
   }
 
   @override
